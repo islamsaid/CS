@@ -1,0 +1,131 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+        <link href="#{request.contextPath}/resources/css/useful.css" rel="stylesheet"></link>
+        <link href="#{request.contextPath}/resources/css/innerPages.css" rel="stylesheet"></link>
+        <script type="text/javascript" >
+            function checkPasswordMatch() {
+                var password = document.getElementById("form1:pwd1").value;
+                var confirmPassword = document.getElementById("form1:pwd2").value;
+//                var confirmPassword = $("#pwd2").val();
+                if (password == "" || confirmPassword == "")
+                    document.getElementById("form1:pwd1msg").style.display = "none";
+                else
+                {
+                    if (password != confirmPassword) {
+                        document.getElementById("form1:pwd1msg").style.display = "block";
+//                        document.getElementById("form1:pwd1msg").innerHTML = "Passwords do not match!";
+                        document.getElementById("form1:pwd1msg").className = "ui-message ui-message-error ui-widget ui-corner-all ui-helper-clearfix";
+                        document.getElementById("form1:pwd2").className = "ui-inputfield ui-password ui-widget ui-state-default ui-corner-all ui-state-error";
+                        document.getElementById("form1:pwd2").style.border = "1px solid red";
+                    }
+                    else {
+                        document.getElementById("form1:pwd1msg").style.display = "none";
+                        document.getElementById("form1:pwd1").className = "ui-inputfield ui-password ui-widget ui-state-default ui-corner-all";
+                        document.getElementById("form1:pwd2").style.border = "0px";
+                    }
+                }
+            }
+        </script>
+    </h:head>
+    <h:body>
+        <div class="innerHeader Mbottom20">
+        </div>
+        <div class="registrationHolder">
+        <h:form id="form1">
+            <p:panel header="Validate">               
+                <p:messages autoUpdate="true"/>
+
+                <h:panelGrid id="grid" columns="4" cellpadding="5" style="display:inline-block; width:100%;">
+                    
+                    <h:outputLabel for="userName" value="Name:" style="font-weight:bold"/>                    
+                    <p:inputText id="userName" value="#{registrationBean.userName}"
+                                 onkeydown="noArabicNoApostropheNoQuotationMark();" onkeypress="noArabicNoApostropheNoQuotationMark();" onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                 required="true" label="Name" />
+                    <p:message for="userName" />
+                    <h:outputText value="#{registrationBean.userName}" />
+                    
+                    <h:outputLabel for="displayName" value="Name:" style="font-weight:bold"/>                    
+                    <p:inputText id="displayName" 
+                                 onkeydown="noArabicNoApostropheNoQuotationMark();" onkeypress="noArabicNoApostropheNoQuotationMark();" onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                 value="#{registrationBean.displayName}" required="true" label="Name" />
+                    <p:message for="displayName" />
+                    <h:outputText value="#{registrationBean.displayName}" />
+
+                    <h:outputLabel for="pwd1" value="Password 1: *" />
+                    <p:password id="pwd1" value="#{registrationBean.password}" match="pwd2" label="Password 1" required="true" feedback="true" onchange="checkPasswordMatch();">
+                        <p:clientValidator />
+                    </p:password>
+                    <p:message for="pwd1" rendered="true"/>
+                    <h:outputText value="#{registrationBean.password}" />
+
+                    <h:outputLabel for="pwd2" value="Password 2: *" />
+                    <p:password id="pwd2" value="#{registrationBean.password}" label="Password 2" required="true" onchange="checkPasswordMatch();">
+                        <p:clientValidator/>
+                    </p:password>
+                    <p:message for="pwd2" />
+                    <h:outputText value="#{registrationBean.password}" />
+
+                    <p:outputLabel for="gendre" value="Gendre: " />
+                    <p:selectOneMenu id="gendre" value="#{registrationBean.gender}">
+                        <f:selectItem itemLabel="Select One" itemValue="" />
+                        <f:selectItems value="#{registrationBean.genders}" />
+                    </p:selectOneMenu>
+                    <p:message for="gendre" />
+                    <h:outputText value="#{registrationBean.gender}" />
+                   
+                    <h:outputLabel for="number" value="Mobile Number:" style="font-weight:bold"/>                    
+                    <p:inputText id="number" value="#{registrationBean.mobileNumber}" 
+                                 onkeydown="noArabicNoApostropheNoQuotationMark();" onkeypress="noArabicNoApostropheNoQuotationMark();" onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                 label="Number">
+                        <f:validateLength minimum="10" maximum="14" /> 
+                        <p:clientValidator/>
+                    </p:inputText> 
+                    <p:message for="number" />
+                    <h:outputText value="#{registrationBean.mobileNumber}" />
+
+                    <h:outputLabel for="email:" value="Email:" style="font-weight:bold"/>                    
+                    <p:inputText id="email" value="#{registrationBean.email}" validatorMessage="email does not match pattern.">
+                        <f:validateRegex pattern="^[-a-z0-9~!$%^*_=+}{\'?]+(\.[-a-z0-9~!$%^*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$" />
+                    </p:inputText>
+                    <p:message for="email:" />
+                    <h:outputText value="#{registrationBean.email}" />
+
+                    <h:outputLabel for="date" value="Date" style="font-weight:bold"/>                 
+                    <p:calendar id="date" value="#{registrationBean.date}" showOn="button" pattern="dd/MM/yyyy" >
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                        <p:clientValidator/>
+                    </p:calendar>
+                    <p:message for="date" />
+                    <h:outputText value="#{registrationBean.date}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>                   
+
+                    <h:outputLabel for="Descr" value="Description" style="font-weight:bold"/>
+                    <p:inputText id="Descr" value="#{registrationBean.description}" 
+                                 onkeydown="noArabicNoApostropheNoQuotationMark();" onkeypress="noArabicNoApostropheNoQuotationMark();" onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                 required="true" label="Description" style="height: 80px;">
+                        <f:validateLength minimum="3" maximum="10" /> 
+                    </p:inputText>
+                    <p:message for="Descr" />
+                    <h:outputText value="#{registrationBean.description}" />
+
+
+                </h:panelGrid>
+                <div style="display:inline-block;vertical-align:top;  margin-left: 30px; margin-top: 95px; " >                        
+                    <h:outputText id="pwd1msg" value="Passwords do not match!" style="display: none" />
+                </div>
+
+                <p:commandButton action="#{registrationBean.submit}" value="Non-Ajax" ajax="false" icon="ui-icon-check" validateClient="true" style="margin-right:10px"/>
+                <p:commandButton value="Ajax" update="grid" icon="ui-icon-check" validateClient="true" style="margin-right:10px"/>
+            </p:panel>
+        </h:form>
+        </div>
+    </h:body>
+</html>
+

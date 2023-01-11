@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>
+        <!-- META -->
+        <meta charset="UTF-8" />
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1, maximum-scale=1" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <link rel="apple-touch-icon" sizes="57x57" href="#{request.contextPath}/resources/images/favicons/apple-icon-57x57.png"></link>
+        <link rel="assets/favicon/apple-touch-icon" sizes="60x60" href="#{request.contextPath}/resources/images/favicons/apple-icon-60x60.png"></link>
+        <link rel="assets/favicon/apple-touch-icon" sizes="72x72" href="#{request.contextPath}/resources/images/favicons/apple-icon-72x72.png"></link>
+        <link rel="assets/favicon/apple-touch-icon" sizes="76x76" href="#{request.contextPath}/resources/images/favicons/apple-icon-76x76.png"></link>
+        <link rel="assets/favicon/apple-touch-icon" sizes="114x114" href="#{request.contextPath}/resources/images/favicons/apple-icon-114x114.png"></link>
+        <link rel="assets/favicon/apple-touch-icon" sizes="120x120" href="#{request.contextPath}/resources/images/favicons/apple-icon-120x120.png"></link>
+        <link rel="assets/favicon/apple-touch-icon" sizes="144x144" href="#{request.contextPath}/resources/images/favicons/apple-icon-144x144.png"></link>
+        <link rel="assets/favicon/apple-touch-icon" sizes="152x152" href="#{request.contextPath}/resources/images/favicons/apple-icon-152x152.png"></link>
+        <link rel="assets/favicon/apple-touch-icon" sizes="180x180" href="#{request.contextPath}/resources/images/favicons/apple-icon-180x180.png"></link>
+        <link rel="icon" type="image/png" sizes="192x192"  href="#{request.contextPath}/resources/images/favicons/android-icon-192x192.png"></link>
+        <link rel="icon" type="image/png" sizes="32x32" href="#{request.contextPath}/resources/images/favicons/favicon-32x32.png"></link>
+        <link rel="icon" type="image/png" sizes="96x96" href="#{request.contextPath}/resources/images/favicons/favicon-96x96.png"></link>
+        <link rel="icon" type="image/png" sizes="16x16" href="#{request.contextPath}/resources/images/favicons/favicon-16x16.png"></link>
+
+        <link rel="manifest" href="#{request.contextPath}/resources/images/favicons/manifest.json"></link>
+        <meta name="msapplication-TileColor" content="#ffffff"></meta>
+        <meta name="msapplication-TileImage" content="#{request.contextPath}/resources/images/favicons/ms-icon-144x144.png"></meta>
+        <meta name="theme-color" content="#ffffff"></meta>
+
+        <!-- TITLE -->
+        <title><ui:insert name="title" /></title>
+        <!-- SEO -->
+        <meta name="description" content="" />
+        <meta name="keywords" content="" />
+        <meta name="author" content="" />
+        <!-- FAVICON -->
+        <!--   <link rel="shortcut icon" href="images/favicon.ico" />    -->
+        <!-- STYLES -->
+        <link href="#{request.contextPath}/resources/css/bootstrap.css"
+              rel="stylesheet"></link>
+        <link href="#{request.contextPath}/resources/css/useful.css"
+              rel="stylesheet"></link>
+        <link href="#{request.contextPath}/resources/css/innerPages.css"
+              rel="stylesheet"></link>
+        <link href="#{request.contextPath}/resources/css/font-awesome.css"
+              rel="stylesheet"></link>
+        <link
+            href="#{request.contextPath}/resources/css/jquery.mCustomScrollbar.min.css"
+            rel="stylesheet"></link>
+        <link href="#{request.contextPath}/resources/css/styles.css"
+              rel="stylesheet"></link>
+
+        <!-- SCRIPTS -->
+        <script type="text/javascript" src="../resources/js/modernizr-2.6.2.min.js"></script>
+
+        <script type="text/javascript" src="../resources/js/bootstrap.js"></script>
+        <script type="text/javascript" src="../resources/js/jquery.mCustomScrollbar.concat.min.js"></script>
+
+
+    </h:head>
+    <h:body>
+        <a href="#" class="scrollup"><i class="fa fa-angle-up"></i></a>
+        <header class="header">
+            <div class="container">
+                <div class="row">
+                    <!--Logo Left -->
+                    <div class="logo">
+                        <h3 class="projectName">Vodafone Contact Strategy</h3>
+                    </div>
+
+
+                    <!--/Logo Left -->
+                    <!--User Loging info Right -->
+                    <div class="user_profile pull-right">
+                        <h:form>
+<!--                            <label class="dropdown dropdown_container"> <a href="#"
+                                                                           id="dropdownMenu1" class="dropdown-user" data-toggle="dropdown"
+                                                                           aria-haspopup="true" aria-expanded="true"> <span>Hi,</span><span
+                                        class="label_orange"><p:outputLabel value="#{homeBean.loggedInUser.username}"/>
+                                    </span> <span
+                                        class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                    <li><h:commandLink value="Sign-Out" styleClass="fa fa-sign-out fa-sign-out-l" action="#{homeBean.logoutUser()}"/></li>
+                                </ul>
+                            </label>
+                            <span class="sep">|</span>
+                            <label class="Container_text_profile">
+                                <span class="fixPosition">logged in as : </span>
+                                <span class="label_orange menuTopAction-container">
+                                        <p:outputLabel value="#{homeBean.loggedInUser.username}"/>
+                                </span>
+                            </label>-->
+                            <label class="Container_text_profile">
+                                <!--<span class="fixPosition">logged in as : </span>-->
+                                <p:outputLabel value="logged in as : " styleClass="Container_text_profile"/>
+                                <span class="label_orange menuTopAction-container">
+                                    <p:outputLabel value="#{homeBean.loggedInUser.username}"/>
+                                </span>
+                            </label>
+                            <span class="sep">|</span>
+                            <h:commandLink value="Sign-Out" styleClass="fa fa-sign-out fa-sign-out-l" action="#{homeBean.logoutUser()}"/>
+
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+            <!--/User Loging info Right -->
+            <!-- .row -->
+            <!-- .container -->
+        </header>
+        <!-- .header -->
+
+        <div class="container">
+            <div id="wrapper" class="">
+                <!-- Sidebar -->
+                <div id="sidebar-wrapper" class="sidebar-wrapper mCustomScrollbar"
+                     data-mcs-theme="minimal-dark">
+                    <div class="menu_block">
+                        <a href="#menu-toggle" class="btn-menu" id="menu-toggle"><i
+                                class="fa fa-bars"></i></a>
+                    </div>
+
+                    <div class="panel-group accordion" id="accordion" role="tablist"
+                         aria-multiselectable="true">
+                        <!-- Accordion  Control-->
+                        <h:form id="menuform">
+
+
+                            <p:dialog modal="true" id="waitingMsgFun" position="center" styleClass="loadingArea"
+                                      closable="false" resizable="false" draggable=""
+                                      widgetVar="waitingMsgFunDlglo">
+                                <table class="loading_table">
+                                    <tr>
+                                        <td align="center"><h:graphicImage library="images"
+                                                                           url="/resources/images/loading-x.gif"></h:graphicImage></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Please Wait .......</td>
+                                    </tr>
+                                </table>
+                            </p:dialog>
+
+                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                <p:commandButton value="Yes" type="button"
+                                                 styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                <p:commandButton value="No" type="button"
+                                                 styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                            </p:confirmDialog>
+
+                            <script type="text/javascript" src="../resources/js/SpecialValidations.js"></script>
+                            <script type="text/javascript" src="../resources/js/app.js"></script>
+                            <p:menu styleClass="menuHolder">
+                                <c:forEach var="menuItem" items="#{homeBean.menuList}">
+                                    <p:menuitem value="#{menuItem.pageName}" action="#{homeBean.navigateToPage(menuItem)}"
+                                                update="@form" onstart="PF('waitingMsgFunDlglo').show();"
+                                                styleClass="#{menuItem.icoStyleClass} #{sessionScope['activeMenu'] == menuItem.id ? 'active-pane' : ''}">
+                                    </p:menuitem>
+                                </c:forEach>
+                            </p:menu>
+                        </h:form>
+                    </div>
+                </div>
+                <!-- Page Content -->
+                <div id="page-content-wrapper">
+                    <div class="container-fluid ">
+                        <div class="row">
+                            <div class="all_content">
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <ui:insert name="content">
+                                            content
+                                        </ui:insert>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            /////////
+            function simulateClick() {
+                //document.getElementById('bmenu-toggle').click(); 
+                $("#menu-toggle").click();
+            }
+
+            function addSimulateClick() {
+                $(".simulateClick").each(function () {
+                    if ($("#wrapper").hasClass("toggled"))
+                        $(this).attr('onclick', 'simulateClick();');
+                    else
+                        $(this).attr('onclick', '');
+
+                });
+            }
+
+            addSimulateClick();
+        </script>
+        <!-- footer -->
+        <footer class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="pull-right">
+                        <h3>Copyright 2016 Vodafone, All Rights Reserved</h3>
+                    </div>
+                    <div class="pull-left">
+                        <h3>Vodafone contact strategy V. 10.0.1</h3>
+                        <h3>Designed and developed by Asset Technology Group</h3>
+                    </div>
+                </div>
+                <!-- .row -->
+            </div>
+            <!-- .container-fluid -->
+        </footer>
+        <!-- .footer -->
+
+        <script type="text/javascript">
+            $(function () {
+// menu-toggle
+                $("#menu-toggle").click(function (e) {
+                    e.preventDefault();
+                    $("#wrapper").toggleClass("toggled");
+                    $("#wrapper .parent").addClass("toggled-parent");
+                    addSimulateClick();
+
+                });
+
+
+            });
+        </script>
+        
+<!--        <script>
+            $(document).ready(function () {
+                var parentHeight = $('.ui-panelgrid').parent().height();
+                $('.equals .equal-height').each( function () {
+                    $(this).css('height', parentHeight+'px');
+                }
+            });
+        </script>-->
+    </h:body>
+</html>

@@ -1,0 +1,243 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/Template/menuTempplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html">
+
+    <ui:define name="title">
+        Application Queue Management
+    </ui:define>
+
+    <ui:define name="content">
+
+        <p:messages id="errors" autoUpdate="true" severity="error info"/>
+
+        <div class="table_title_text">
+            <p:panelGrid columns="4">
+                <p:outputLabel value="Application Queue Create" rendered="#{queueBean.createMode}"/>
+                <p:outputLabel value="Edit #{queueBean.queueModel.appName}" rendered="#{queueBean.editMode}"/>
+                <p:outputLabel value="View #{queueBean.queueModel.appName}" rendered="#{queueBean.viewMode}"/>
+                <p:outputLabel value="Approve #{queueBean.queueModel.appName}" rendered="#{queueBean.approvalMode}"/>
+            </p:panelGrid>
+        </div>
+        <div class="searchArea">
+            <h:form id="form">
+                
+                <p:dialog modal="true" id="waitingMsgFun" position="center"
+                          closable="false" resizable="false" draggable=""
+                          widgetVar="waitingMsgFunDlg">
+                    <table class="loading_table">
+                        <tr>
+                            <td align="center"><h:graphicImage library="images"
+                                                               url="/resources/images/loading-x.gif"></h:graphicImage></td>
+                        </tr>
+                        <tr>
+                            <td>Please Wait .......</td>
+                        </tr>
+                    </table>
+                </p:dialog>
+                <p:ajaxStatus onstart="PF('waitingMsgFunDlg').show();"
+                              oncomplete="PF('waitingMsgFunDlg').hide();">
+                </p:ajaxStatus>
+                
+                        <p:outputLabel value="Queue Type :"/>
+                        <p:selectOneMenu value="#{queueBean.queueModel.queueType}"  disabled="#{!queueBean.createMode}">
+                            <f:selectItems value="#{queueBean.queueTypeLK.entrySet()}" var="queueTypeLK"  itemLabel="#{queueTypeLK.value.lable}" itemValue="#{queueTypeLK.value.id}" >
+                        </f:selectItems>
+                            <p:ajax event="change" listener="#{queueBean.change}" update="form" />
+                    </p:selectOneMenu>
+
+                
+                <p:panelGrid columns="2">
+                    <p:panelGrid columns="1" styleClass="equalHeight">
+                        <p:panelGrid>
+                            <p:outputLabel value="Application Queue Name"/>
+                             <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                        </p:panelGrid>
+                        <p:inputText value="#{queueBean.queueModel.appName}" 
+                                     onkeydown="noArabicNoSpaceNoSpecialChars();"
+                                         onkeyup="noArabicNoSpaceNoSpecialChars();"
+                                         onkeypress="noArabicNoSpaceNoSpecialChars();"
+                                         readonly="#{queueBean.editMode and !queueBean.queueTypeView}"
+                                     disabled="#{queueBean.viewMode}"
+                                     id="app_queue_name" binding="#{appQueueName}" maxlength="18">
+                            <!--<p:ajax process="@this"/>-->
+                        </p:inputText>
+                    </p:panelGrid>
+                    <p:panelGrid columns="1" styleClass="equalHeight">
+                        <p:panelGrid>
+                            <p:outputLabel value="Table Space Name"  rendered="#{queueBean.createMode}"/>
+                             <p:outputLabel value="*" style="color: red"  rendered="#{queueBean.createMode}"></p:outputLabel>
+                        </p:panelGrid>
+                        <p:inputText value="#{queueBean.queueModel.tableSpaceName}" readonly="#{(queueBean.editMode and !queueBean.queueTypeView)}" rendered="#{queueBean.createMode}"
+                                             onkeydown="noArabicNoApostropheNoQuotationMark();"
+                                             onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                             onkeypress="noArabicNoApostropheNoQuotationMark();"
+                                             disabled="#{queueBean.viewMode}"
+                                     id="tableSpaceName" maxlength="50" binding="#{tableSpaceName}">
+                        </p:inputText>
+                    </p:panelGrid>
+                    <p:panelGrid columns="1" styleClass="equalHeight">
+                        <p:outputLabel value="Dequeque Pool Size">
+                            <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                        </p:outputLabel>
+                        <p:spinner id="dequeue_pool_size" value="#{queueBean.queueModel.dequeuePoolSize}" min="1" max="9" maxlength="1"
+                                   converterMessage="Dequeque Pool Size must be a number consisting of one or more digits."
+                                   disabled="#{queueBean.viewMode}" validator="#{queueBean.requiredFieldsValidator}" >
+                            <f:attribute name="appQueueNameAttr" value="#{appQueueName}"></f:attribute>
+                            <f:attribute name="senderPoolSizeAttr" value="#{senderPoolSizeBinding}"></f:attribute>
+                            <f:attribute name="smscAttr" value="#{smscBinding}"></f:attribute>
+                            <f:attribute name="timeWindowFlagAttr" value="#{timeWindowFlag}"/>
+                            <f:attribute name="timeWindowFromHrAttr" value="#{timeWindowFromHr}"/>
+                            <f:attribute name="timeWindowFromMinAttr" value="#{timeWindowFromMin}"/>
+                            <f:attribute name="timeWindowToHrAttr" value="#{timeWindowToHr}"/>
+                            <f:attribute name="timeWindowToMinAttr" value="#{timeWindowToMin}"/>
+                            <f:attribute name="databaseURLAttr" value="#{databaseUrl}"/>
+                            <f:attribute name="schemaNameAttr" value="#{schemaName}"/>
+                            <f:attribute name="schemaPasswordAttr" value="#{schemaPassword}"/>
+                            <f:attribute name="tableSpaceNameAttr" value="#{tableSpaceName}"/>
+                        </p:spinner>
+                    </p:panelGrid>
+                    <p:panelGrid columns="1" styleClass="equalHeight">
+                        <p:outputLabel value="Threshold"></p:outputLabel>
+                        <p:spinner converterMessage="Threshold must be a number consisting of one or more digits." id="Threshold" value="#{queueBean.queueModel.threshold}" min="1" max="10000" maxlength="5" disabled="#{queueBean.viewMode}" readonly="#{(queueBean.editMode and queueBean.queueTypeView) or (queueBean.createMode and queueBean.queueTypeView)}">
+                            <!--<p:ajax event="change" process="@this"/>-->
+                        </p:spinner>
+                    </p:panelGrid>
+                    <p:panelGrid columns="1" styleClass="equalHeight">
+                        <p:outputLabel value="Time Window Flag"></p:outputLabel>
+                        <p:selectBooleanCheckbox value="#{queueBean.queueModel.timeWindowFlag}" 
+                                                 disabled="#{(queueBean.editMode and queueBean.queueTypeView) or (queueBean.createMode and queueBean.queueTypeView) or queueBean.viewMode}" binding="#{timeWindowFlag}" >
+                            <p:ajax  event="change" 
+                                     update="form:time_window_from_panel form:time_window_to_panel" process="@this"/>
+                        </p:selectBooleanCheckbox>
+                    </p:panelGrid>
+                    <p:panelGrid columns="1" styleClass="equalHeight">
+                        <p:outputLabel value="Sender Pool Size">
+                            <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                        </p:outputLabel>
+                            
+                        <p:spinner value="#{queueBean.queueModel.senderPoolSize}" min="1" max="9" maxlength="1" 
+                                   converterMessage="Sender Pool Size must be a number."
+                                   binding="#{senderPoolSizeBinding}" disabled="#{queueBean.viewMode}" readonly="#{(queueBean.editMode and queueBean.queueTypeView) or (queueBean.createMode and queueBean.queueTypeView)}">
+                            <!--<p:ajax event="change" process="@this"/>-->
+                        </p:spinner>
+                    </p:panelGrid>
+                    
+                      <p:panelGrid columns="1" id="time_window_from_panel" styleClass="equalHeight">
+                        <p:outputLabel value="Time Window From"></p:outputLabel>
+                        <p:panelGrid columns="2">
+                            <p:panelGrid columns="1">
+                            <p:outputLabel value="hours"/>
+                            <p:spinner id="time_window_from_hr" value="#{queueBean.queueModel.timeWindowFromHour}" 
+                                       min="0" max="23" maxlength="2" binding="#{timeWindowFromHr}"
+                                       disabled="#{!queueBean.queueModel.timeWindowFlag || queueBean.viewMode}">
+                                <!--<p:ajax event="change" process="@this"/>-->
+                            </p:spinner>
+                            </p:panelGrid>
+                            <p:panelGrid columns="1">
+                                <p:outputLabel value="mins"/>
+                            <p:spinner id="time_window_from_min" value="#{queueBean.queueModel.timeWindowFromMin}" 
+                                       min="0" max="59" maxlength="2"
+                                       binding="#{timeWindowFromMin}"
+                                       disabled="#{!queueBean.queueModel.timeWindowFlag || queueBean.viewMode}">
+                                <!--<p:ajax event="change" process="@this"/>-->
+                            </p:spinner>
+                            </p:panelGrid>
+                        </p:panelGrid>
+                    </p:panelGrid>
+                    
+                    <p:panelGrid columns="1" id="time_window_to_panel" styleClass="equalHeight">
+                        <p:outputLabel value="Time Window To"></p:outputLabel>
+                        <p:panelGrid columns="2">
+                            <p:panelGrid columns="1">
+                              <p:outputLabel value="hours"/>   
+                            <p:spinner id="time_window_to_hr" value="#{queueBean.queueModel.timeWindowToHour}" 
+                                       min="0" max="23" maxlength="2"
+                                       binding="#{timeWindowToHr}"
+                                       disabled="#{!queueBean.queueModel.timeWindowFlag || queueBean.viewMode}">
+                                <!--<p:ajax event="change" process="@this"/>-->
+                            </p:spinner>
+                            </p:panelGrid>
+                            <p:panelGrid columns="1">
+                                 <p:outputLabel value="mins"/>
+                            <p:spinner id="time_window_to_min" value="#{queueBean.queueModel.timeWindowToMin}" 
+                                       min="0" max="59" maxlength="2"
+                                       binding="#{timeWindowToMin}"
+                                       disabled="#{!queueBean.queueModel.timeWindowFlag || queueBean.viewMode}">
+                               <!--<p:ajax event="change" process="@this"/>-->
+                            </p:spinner>
+                            </p:panelGrid>
+                        </p:panelGrid>
+                    </p:panelGrid>
+
+                  
+                    <p:panelGrid columns="1" styleClass="equalHeight">
+                        <p:panelGrid>
+                        <p:outputLabel value="Database URL"></p:outputLabel>
+                        <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                        </p:panelGrid>
+                        <p:inputText value="#{queueBean.queueModel.databaseUrl}" 
+                                     binding="#{databaseUrl}"
+                                     disabled="#{queueBean.viewMode}" maxlength="200" readonly="#{queueBean.editMode and !queueBean.queueTypeView}">
+                        </p:inputText>
+                    </p:panelGrid>
+                    <p:panelGrid columns="1" styleClass="equalHeight">
+                        <p:panelGrid>
+                        <p:outputLabel value="Schema Name"></p:outputLabel>
+                        <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                        </p:panelGrid>
+                        <p:inputText value="#{queueBean.queueModel.schemaName}" 
+                                             onkeydown="noArabicNoApostropheNoQuotationMark();"
+                                             onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                             onkeypress="noArabicNoApostropheNoQuotationMark();"
+                                     binding="#{schemaName}"
+                                     disabled="#{queueBean.viewMode}" maxlength="50" readonly="#{queueBean.editMode and !queueBean.queueTypeView}"></p:inputText>
+                    </p:panelGrid>
+                    <p:panelGrid columns="1" styleClass="equalHeight">
+                        <p:panelGrid>
+                        <p:outputLabel value="Schema Password"></p:outputLabel>
+                        <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                        </p:panelGrid>
+                        <p:inputText value="#{queueBean.queueModel.schemaPassword}" 
+                                             onkeydown="noArabicNoApostropheNoQuotationMark();"
+                                             onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                             onkeypress="noArabicNoApostropheNoQuotationMark();"
+                                     binding="#{schemaPassword}"
+                                     disabled="#{queueBean.viewMode}" maxlength="50" readonly="#{queueBean.editMode and !queueBean.queueTypeView}"></p:inputText>
+                    </p:panelGrid>
+                </p:panelGrid>
+                <p:panelGrid columns="1" styleClass="equalHeight">
+
+                    <p:outputLabel value="SMSC">
+                        <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                    </p:outputLabel>
+                    <p:pickList id="smsc" value="#{queueBean.smscDualList}" var="SMSC" 
+                                itemValue="#{SMSC}" itemLabel="#{SMSC.SMSCname}" 
+                                showSourceControls="true" showTargetControls="true"
+                                showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains"
+                                converter="genericConverter" responsive="true" disabled="#{(queueBean.editMode and queueBean.queueTypeView) or (queueBean.createMode and queueBean.queueTypeView) or queueBean.viewMode}"
+                                binding="#{smscBinding}">
+                        <p:ajax event="transfer" process="@this"/>
+                        <p:column><p:outputLabel value="#{SMSC.SMSCname}"></p:outputLabel></p:column>
+                    </p:pickList>
+                </p:panelGrid>
+                <div class="btns-table">
+                    <p:panelGrid columns="3" styleClass="equalHeight">
+                        <p:commandButton value="Save" action="#{queueBean.saveApplicationQueue()}" onclick="PF('waitingMsgFunDlg').show();" oncomplete="PF('waitingMsgFunDlg').hide();"
+                                         process="form" rendered="#{queueBean.editMode || queueBean.createMode}"/>
+                        <p:commandButton value="Approve" rendered="#{queueBean.approvalMode}"  onclick="PF('waitingMsgFunDlg').show();" oncomplete="PF('waitingMsgFunDlg').hide();"
+                                         action="#{queueBean.approveApplicationQueue()}"/>
+                        <p:commandButton value="Reject" rendered="#{queueBean.approvalMode}"  onclick="PF('waitingMsgFunDlg').show();" oncomplete="PF('waitingMsgFunDlg').hide();"
+                                         action="#{queueBean.rejectApplicationQueue()}"/>
+                        <p:commandButton value="Cancel" immediate="true"  onclick="PF('waitingMsgFunDlg').show();" oncomplete="PF('waitingMsgFunDlg').hide();"
+                                         action="AppQueueList.xhtml"/>
+                    </p:panelGrid>
+                </div>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

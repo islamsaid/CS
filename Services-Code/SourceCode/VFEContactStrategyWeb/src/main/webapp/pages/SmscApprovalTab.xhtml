@@ -1,0 +1,41 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+>
+
+                 
+                                <p:dataTable var="smsc" value="#{approvalBean.smscList}" paginator="true" rows="10" paginatorPosition="bottom"
+                                             paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                             rowsPerPageTemplate="5,10,15"   id="smscTable" widgetVar="smscTable">
+
+                                    <p:column headerText="SMSC Name" sortBy="#{smsc.SMSCname}" filterBy="#{smsc.SMSCname}" filterMatchMode="contains">
+                                        <h:outputText value="#{smsc.SMSCname}" />
+                                    </p:column>
+
+                                    <p:column headerText="Status" sortBy="#{smsc.statusName}" filterBy="#{smsc.statusName}" filterMatchMode="exact">
+                                        <h:outputText value="#{smsc.statusName}" />
+                                    </p:column>
+
+                                    <p:column headerText="Username" sortBy="#{smsc.username}" filterBy="#{smsc.username}">
+                                        <h:outputText value="#{smsc.username}" />
+                                    </p:column>
+                                    <p:column >
+                                        <p:commandButton  icon="ui-icon-pencil" action="#{smscBean.goToSmscApprovalPage(smsc)}" />
+                                        <p:commandButton  icon="ui-icon-check" action="#{approvalBean.approveSmsc(smsc)}"  update="@form" id="appro_btn">
+                                            <p:confirm header="Confirmation"
+                                                       message="Are you sure you want to approve #{smsc.SMSCname}?"
+                                                       icon="ui-icon-alert" />
+                                        </p:commandButton>
+                                        <p:tooltip for="appro_btn" value="Approve"/>
+                                        <p:commandButton  icon="ui-icon-close" action="#{approvalBean.rejectSmsc(smsc)}" update="@form" id="reject_btn">
+                                            <p:confirm header="Confirmation"
+                                                       message="Are you sure you want to reject #{smsc.SMSCname} ?"
+                                                       icon="ui-icon-alert" />
+                                        </p:commandButton>
+                                        <p:tooltip for="reject_btn" value="Reject"/>
+
+                                    </p:column>
+                                </p:dataTable>
+
+</ui:composition>

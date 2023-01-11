@@ -1,0 +1,80 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="/Template/menuTempplate.xhtml">
+    <ui:define name="title">
+        Operations Approval
+    </ui:define>
+    <ui:define name="content">
+
+        <h:form id="form">
+            
+            <p:dialog modal="true" id="waitingMsgFun" position="center"
+                          closable="false" resizable="false" draggable=""
+                          widgetVar="waitingMsgFunDlg">
+                    <table class="loading_table">
+                        <tr>
+                            <td align="center"><h:graphicImage library="images"
+                                                               url="/resources/images/loading-x.gif"></h:graphicImage></td>
+                        </tr>
+                        <tr>
+                            <td>Please Wait .......</td>
+                        </tr>
+                    </table>
+                </p:dialog>
+                <p:ajaxStatus onstart="PF('waitingMsgFunDlg').show();"
+                              oncomplete="PF('waitingMsgFunDlg').hide();">
+                </p:ajaxStatus>
+            
+            <div id="Messages" align="center">
+                <p:messages id="msgs" showDetail="false" autoUpdate="true"
+                            closable="true" />
+            </div>
+            <div class="table_title_text">
+                <p:panelGrid columns="4">
+                    <p:outputLabel value="Operations Approval"></p:outputLabel>
+                </p:panelGrid>
+            </div>
+
+
+            <div class="searchArea">
+
+                <div align="center">
+                    <div class="table-responsive serachTabel">
+                        <p:tabView>
+                            <p:tab title="SMS Group">
+                                <ui:include src="SmsGroupApprovalTab.xhtml"/>
+                            </p:tab>
+                            <p:tab title="Campaign">
+                                <ui:include src="CampaignApprovalTab.xhtml"/>
+
+                            </p:tab>
+                            <p:tab title="Ads Group">
+                                <ui:include src="CampaignGroupApprovalTab.xhtml"/>
+
+                            </p:tab>
+<!--                            <p:tab title="Service">
+                                <ui:include src="ServiceApprovalTab.xhtml"/>
+
+                            </p:tab>
+
+                            <p:tab title="Queue">
+                                <ui:include src="QueueApprovalTab.xhtml"/>
+
+                            </p:tab>-->
+
+                            <p:tab title="SMSC">
+                                <ui:include src="SmscApprovalTab.xhtml"/>
+                            </p:tab>
+
+
+                        </p:tabView>
+                    </div>
+                </div>
+
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

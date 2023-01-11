@@ -1,0 +1,55 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/Template/menuTempplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:define name="title">
+        Reports
+    </ui:define>
+
+    <div class="innerHeader Mbottom20">
+    </div>
+
+
+    <ui:define name="content">
+        <h:form>
+
+            <p:dialog modal="true" id="waitingMsgFun" position="center"
+                      closable="false" resizable="false" draggable=""
+                      widgetVar="waitingMsgFunDlg">
+                <table class="loading_table">
+                    <tr>
+                        <td align="center"><h:graphicImage library="images"
+                                                           url="/resources/images/loading-x.gif"></h:graphicImage></td>
+                    </tr>
+                    <tr>
+                        <td>Please Wait .......</td>
+                    </tr>
+                </table>
+            </p:dialog>
+            <p:ajaxStatus onstart="PF('waitingMsgFunDlg').show();"
+                          oncomplete="PF('waitingMsgFunDlg').hide();">
+            </p:ajaxStatus>
+            <div class="table_title_text">
+                <p:panelGrid columns="4">
+                    <p:outputLabel value="Reports" ></p:outputLabel>
+                </p:panelGrid>
+            </div>
+            <div class="searchArea">
+                <ui:repeat var="report" value="#{reportsListBean.reportsList}">
+                    <p/>
+                    <div class="W100 cBlue">
+                        <span class="fa fa-file-text-o mRight5"></span>
+                        <h:commandLink value="#{report.getReportName()}" styleClass="icon_before_link" action="#{report.getReportLink()}" onclick="PF('waitingMsgFunDlg').show();">
+                        </h:commandLink>
+                    </div>
+                    <p/>
+                </ui:repeat>
+            </div>
+        </h:form>
+    </ui:define>
+
+
+</ui:composition>

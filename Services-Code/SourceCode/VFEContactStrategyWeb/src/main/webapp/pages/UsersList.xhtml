@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="/Template/menuTempplate.xhtml">
+    <ui:define name="title">
+        Users List
+    </ui:define>
+    <ui:define name="content">
+
+        <h:form id="form">
+            <div id="Messages" align="center">
+                <p:messages id="msgs" showDetail="false" autoUpdate="true"
+                            closable="true" />
+            </div>
+            <div class="table_title_text">
+                <p:panelGrid columns="4">
+                    <p:outputLabel value="Users List"></p:outputLabel>
+                    <p:commandButton value="Create User" action="#{userBean.goToCreatePage()}"></p:commandButton>
+                </p:panelGrid>
+            </div>
+
+
+            <div class="searchArea">
+
+                <div align="center">
+                    <div class="table-responsive serachTabel">
+                        <p:dataTable var="user" value="#{userBean.usersList}" paginator="true" rows="10" paginatorPosition="bottom"
+                                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                     rowsPerPageTemplate="5,10,15" id="usersTable" widgetVar="smscTable">
+
+                            <p:column headerText="User Name" sortBy="#{user.username}" filterBy="#{user.username}" filterMatchMode="contains">
+                                <h:outputText value="#{user.username}" />
+                            </p:column>
+                            
+                            <p:column headerText="User Type" sortBy="#{user.userTypeValue}" filterBy="#{user.userTypeValue}" filterMatchMode="contains">
+                                <h:outputText value="#{user.userTypeValue}" />
+                            </p:column>
+                            
+                            <p:column>
+                                <p:commandButton icon="ui-icon-search" action="#{userBean.goToViewPage(user)}" ajax="false"></p:commandButton>
+                                <p:commandButton icon="ui-icon-pencil" action="#{userBean.goToEditPage(user)}" ajax="false"></p:commandButton>
+                                <p:commandButton icon="ui-icon-trash" immediate="true" action="#{userBean.deleteUser(user)}" update="@form" >
+                                    <p:confirm header="Confirm" message="Are you sure you want to delete user #{user.username} ?" icon="ui-icon-alert" /></p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+                </div>
+
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.asset.CS</groupId>
+    <artifactId>ContactStrategy</artifactId>
+    <version>1.0</version>
+    <packaging>pom</packaging>
+    <modules>        
+        <!-- Commons -->
+        <module>VFEContactStrategyCommon</module>
+		
+        <!-- Engines -->
+        <module>CustomerBaseImporting</module>
+        <module>CustomerGroupMatching</module>
+        <module>InstancesManager</module>
+        <module>VFEDeliveryAggregationEngine</module>
+        <module>VFESendingSMSEngine</module>
+        <module>VFESMSInterfaceBridgingEngine</module>
+        <module>VFE_MOM_ENGINE/AlarmEngine</module>
+        <module>VFE_MOM_ENGINE/AlarmEngineCommon</module>
+		<module>VFESMSCInterface</module>
+		
+        <!-- Web -->
+        <module>VFEContactStrategyEnqueueREST</module>
+        <module>VFEContactStrategyInterfaceReports</module>
+        <module>VFEContactStrategyREST</module>
+        <module>VFEContactStrategyWeb</module>
+        <module>BridgingDequeuerService</module>
+    </modules>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
+    </properties>
+    <name>ParentPOM</name>
+</project>

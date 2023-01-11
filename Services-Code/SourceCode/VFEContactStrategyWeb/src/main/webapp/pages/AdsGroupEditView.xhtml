@@ -1,0 +1,354 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/Template/menuTempplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core">
+
+
+    <ui:define name="title">
+        Ads Group Management
+    </ui:define>
+
+    <div class="innerHeader Mbottom20">
+    </div>
+
+    <ui:define name="content">
+
+        <h:form id="form">
+
+            <p:dialog modal="true" id="waitingMsgFun" position="center"
+                      closable="false" resizable="false" draggable=""
+                      widgetVar="waitingMsgFunDlg">
+                <table class="loading_table">
+                    <tr>
+                        <td align="center"><h:graphicImage library="images"
+                                                           url="/resources/images/loading-x.gif"></h:graphicImage></td>
+                    </tr>
+                    <tr>
+                        <td>Please Wait .......</td>
+                    </tr>
+                </table>
+            </p:dialog>
+            <p:ajaxStatus onstart="PF('waitingMsgFunDlg').show();"
+                          oncomplete="PF('waitingMsgFunDlg').hide();"
+                          onsuccess="PF('waitingMsgFunDlg').hide();">
+            </p:ajaxStatus>
+
+            <div id="Messages" align="center">
+                <p:messages id="msgs" showDetail="false" autoUpdate="true"
+                            closable="true" />
+            </div>
+
+            <div class="table_title_text">
+                <p:panelGrid columns="1" style="width:100%">
+                    <p:outputLabel value="Group Information"></p:outputLabel>
+                </p:panelGrid>
+            </div>
+
+            <div class="searchArea">
+            <p:panelGrid columns="2" styleClass="W100 equalWidthTd">
+                <p:panelGrid columns="1">
+                    <p:panelGrid>
+                        <p:outputLabel value="Group Name"></p:outputLabel>
+                        <p:outputLabel value=" *" style="color:red"></p:outputLabel>
+                    </p:panelGrid>
+                    <p:inputText value="#{adsGroupsEditViewBean.selectedGroup.groupName}" disabled="#{!adsGroupsEditViewBean.creation}" 
+                                 id="groupName" onkeypress="noArabicNoApostropheNoQuotationMark();" onkeydown="noArabicNoApostropheNoQuotationMark();" onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                 maxlength="30" binding="#{groupNameBind}" validator="#{adsGroupsEditViewBean.requiredFieldsValidator}">
+<!--                    <f:attribute name="groupBriorityAttr" value="#{groupBriorityBind}"></f:attribute>
+                    <f:attribute name="ThresholdAttr" value="#{ThresholdBind}"></f:attribute>
+                    <f:attribute name="groupWeekThrAttr" value="#{groupWeekThrBind}"></f:attribute>
+                    <f:attribute name="monthThrAttr" value="#{monthThrBind}"></f:attribute>-->
+                    <f:attribute name="filterCriterieAttr" value="#{filterCriterieBind}"></f:attribute>
+
+                    </p:inputText>
+                </p:panelGrid>
+
+                <p:panelGrid columns="1">
+                    <p:panelGrid>
+                        <p:outputLabel value="Group Priority"></p:outputLabel>
+                        <p:outputLabel value=" *" style="color:red"></p:outputLabel>
+                    </p:panelGrid>
+                    <p:spinner value="#{adsGroupsEditViewBean.selectedGroup.groupPriority}" disabled="#{!adsGroupsEditViewBean.editFlag}" 
+                               id="groupPriority" required="true" requiredMessage="Group Priority is required"
+                               max="9999" min="1" maxlength="4">
+                        <!--<p:ajax event="change" process="@this"/>-->
+                    </p:spinner>
+                </p:panelGrid>
+                <p:panelGrid columns="2">
+                <p:panelGrid columns="1">
+                    <p:panelGrid>
+                        <p:outputLabel value="Group Day Threshold"></p:outputLabel>
+                        <p:outputLabel value=" *" style="color:red"></p:outputLabel>
+                    </p:panelGrid>
+                    <p:spinner value="#{adsGroupsEditViewBean.selectedGroup.dailyThreshold}" disabled="#{!adsGroupsEditViewBean.editFlag}" 
+                               id="groupDayThreshold" required="true" requiredMessage="Group Day Threshold is required" 
+                               max="999" min="0" maxlength="3"> 
+                        <!--<p:ajax event="change" process="@this"/>-->
+                    </p:spinner>
+                </p:panelGrid>
+
+
+                <p:panelGrid columns="1">
+                    <p:panelGrid>
+                        <p:outputLabel value="Group Week Threshold"></p:outputLabel>
+                        <p:outputLabel value=" *" style="color:red"></p:outputLabel>
+                    </p:panelGrid>
+                    <p:spinner value="#{adsGroupsEditViewBean.selectedGroup.weeklyThreshold}" disabled="#{!adsGroupsEditViewBean.editFlag}" 
+                               id="groupWeekThreshold" required="true" requiredMessage="Group Week Threshold is required" 
+                               max="999" min="0" maxlength="3">
+                        <!--<p:ajax event="change" process="@this"/>-->
+                    </p:spinner>
+                </p:panelGrid>
+
+                <p:panelGrid columns="1">
+                    <p:panelGrid>
+                        <p:outputLabel value="Group Month Threshold"></p:outputLabel>
+                        <p:outputLabel value=" *" style="color:red"></p:outputLabel>
+                    </p:panelGrid>
+                    <p:spinner value="#{adsGroupsEditViewBean.selectedGroup.monthlyThreshold}" disabled="#{!adsGroupsEditViewBean.editFlag}" 
+                               id="groupMonthThreshold" required="true" requiredMessage="Group Month Threshold is required" 
+                               max="999" min="0" maxlength="3">
+                        <!--<p:ajax event="change" process="@this"/>-->
+                    </p:spinner>
+                </p:panelGrid>
+</p:panelGrid>
+                <p:panelGrid columns="1">
+                    <p:panelGrid columns="2">
+                        <p:outputLabel value="Description"></p:outputLabel>
+                    </p:panelGrid>
+                    <p:inputTextarea value="#{adsGroupsEditViewBean.selectedGroup.groupDescription}" disabled="#{!adsGroupsEditViewBean.editFlag}" 
+                                     autoResize="false"  onkeypress="noArabicNoApostropheNoQuotationMark();" onkeydown="noArabicNoApostropheNoQuotationMark();" onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                     id="groupDescription" maxlength="300">
+                    </p:inputTextarea>
+                </p:panelGrid>
+            </p:panelGrid>
+
+
+            <h:panelGrid columns="2" cellpadding="10" styleClass="pTop15 pLeft20 dInlineBlock filterFloats">
+                <h:panelGroup >
+                    <br />
+                    <p:outputLabel value="Filter Criteria:" />
+                    <p:outputLabel value=" *" style="color:red"></p:outputLabel>
+                </h:panelGroup>
+                <h:panelGroup>
+                    <p:selectOneRadio id="whiteListType" disabled="#{!adsGroupsEditViewBean.creation}"
+                                      layout="pageDirection"
+                                      binding="#{filterCriterieBind}"
+                                      value="#{adsGroupsEditViewBean.selectedGroup.groupType}" converter="GroupTypeConverter">
+                        <f:selectItems value="#{adsGroupsEditViewBean.groupTypesList}" var="gType" itemLabel="#{gType.lable}" itemValue="#{gType}" />
+                        <f:ajax render="criteriaAndUpload" event="change"/>
+                    </p:selectOneRadio>
+                </h:panelGroup>
+            </h:panelGrid>
+
+            <h:panelGroup id="criteriaAndUpload" styleClass="serachTabel">
+
+                <h:panelGroup id="uploadAndParseFile" rendered="#{adsGroupsEditViewBean.selectedGroup.groupType.id eq 2}">
+                    <p:outputLabel value="Note: The supported file format is .CSV" styleClass="W100 TAC pTop15" 
+                                   style="text-align:left !important; margin-left: 23px;"/>
+                    <br/> 
+                    <h:panelGrid columns="1" styleClass="W100">
+                        <h:panelGroup >
+                            <p:fileUpload disabled="#{!adsGroupsEditViewBean.editFlag}" label="Browse Group Files" update="uploadAndParseFile" fileUploadListener="#{uploadAndParseFileBean.handleFileUpload}" mode="advanced"  
+                                          multiple="true"   allowTypes="/(\.|\/)(csv)$/" 
+                                          sizeLimit="#{uploadAndParseFileBean.retrieveUploadFileSizeLimit()}" invalidFileMessage="Invalid File Type"
+                                          invalidSizeMessage="Invalid File Size, which is above file size allowed [#{uploadAndParseFileBean.uploadSizeLimit / 1000000} MB]."
+                                          onstart="PF('waitingMsgFunDlg').show();" oncomplete="PF('waitingMsgFunDlg').hide();">
+
+                            </p:fileUpload>
+                        </h:panelGroup>
+                        <br/>
+                        <p:dataTable value="#{uploadAndParseFileBean.groupFiles}" id="uploadedFiles" var="file">
+                            <f:facet name="header">
+                                Uploaded Files
+                            </f:facet>
+                            <p:column headerText="File Name">
+                                <h:outputText value="#{file.fileName}"/>
+                            </p:column>
+                            <p:column headerText="Delete">          
+                                <h:panelGroup >
+                                    <p:commandButton process="@this" icon="ui-icon-trash" action="#{uploadAndParseFileBean.removeFile(file)}" update="uploadedFiles" rendered="#{adsGroupsEditViewBean.editFlag}" >
+                                        <p:confirm header="Confirmation" message="Are you sure you want to delete this file?"
+                                                   icon="ui-icon-alert" />
+                                    </p:commandButton>                            </h:panelGroup>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                </h:panelGroup>
+
+
+
+                <h:panelGroup id="dwhFilters" rendered="#{adsGroupsEditViewBean.selectedGroup.groupType.id eq 1}">
+                    <!--   Insert Attribute         -->
+
+                    <div class="equalTable">
+                    <p:panelGrid id="newFilterPnl" columns="4">
+                        <f:facet name="header">
+                            Insert Filter
+                        </f:facet>
+                        <p:column  headerText="Filter">
+                            <f:facet name="header">
+                                Filter
+                            </f:facet>
+                            <p:outputLabel value="Filters"/>
+                            <br/>
+                            <p:selectOneMenu disabled="#{!adsGroupsEditViewBean.editFlag}" id="selectedElementmenu" filter="true" filterMatchMode="contains" value="#{adsGroupsEditViewBean.newFilter.dwhElementModel}" 
+                                             converter="dwhElementModelConverter" >
+                                <f:selectItems value="#{adsGroupsEditViewBean.attrValues}" var="att" 
+                                               itemLabel="#{att.displayName}" itemValue="#{att}"/>
+                                <f:ajax event="change" render="newFilterPnl"
+                                        listener="#{adsGroupsEditViewBean.fillOperators()}"/>
+                            </p:selectOneMenu>
+                        </p:column>   
+                        <p:column headerText="Operators">
+                            <f:facet name="header">
+                                Operator
+                            </f:facet>
+                            <p:outputLabel value="Operator"/>
+                            <br/>
+                            <p:selectOneMenu disabled="#{!adsGroupsEditViewBean.editFlag}" id="operators" value="#{adsGroupsEditViewBean.newFilter.operatorModel}" converter="dwhOperatorsConverter" >
+                                <f:selectItems value="#{adsGroupsEditViewBean.operators}" var="operators" itemLabel="#{operators.lable}" itemValue="#{operators}" />
+                                <f:ajax event="change" render="newFilterPnl"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column headerText="Value">
+                            <h:panelGroup id="values">
+                                <h:panelGroup  rendered="#{adsGroupsEditViewBean.multiSelectAttributeVisible}"  >
+                                    <h:outputText  value="Element Values"/>
+                                    <br/>
+                                    <p:selectManyMenu disabled="#{!adsGroupsEditViewBean.editFlag}" value="#{adsGroupsEditViewBean.newFilter.selectedElementValues}" converter="valuesConverter" label="#{val.valueLabel}"  >
+                                        <f:selectItems value="#{adsGroupsEditViewBean.newFilter.dwhElementModel.multiSelectionValues}" var="val" itemLabel="#{val.valueLabel}" itemValue="#{val}"/>          
+                                    </p:selectManyMenu>
+                                </h:panelGroup>
+                                <h:panelGroup  rendered="#{adsGroupsEditViewBean.numberAttributeVisible}" >
+                                    <h:outputText   value="Value (Numbers Only)"/>
+                                    <br/>
+                                    <p:inputText disabled="#{!adsGroupsEditViewBean.editFlag}" id="selectedVal_"   value="#{adsGroupsEditViewBean.query}" onkeydown="return isNumber();" onkeypress="return isNumber();" maxlength="64" converterMessage="Value must be integer only.">
+                                        <f:convertNumber  integerOnly="true"/>
+                                    </p:inputText>
+                                </h:panelGroup>
+                                <h:panelGroup  rendered="#{adsGroupsEditViewBean.stringAttributeVisible }" >
+                                    <h:outputText  value="Value"/>
+                                    <br/>
+                                    <p:inputText disabled="#{!adsGroupsEditViewBean.editFlag}" maxlength="200" id="selectedIntVal_" onkeydown="noArabicNoApostropheNoQuotationMark();" onkeyup="noArabicNoApostropheNoQuotationMark();" onkeypress="noArabicNoApostropheNoQuotationMark();" value="#{adsGroupsEditViewBean.query}" styleClass="qNum" />
+                                </h:panelGroup>
+
+                                <h:panelGroup  id="cale" rendered="#{adsGroupsEditViewBean.dateAttributeVisible}">
+                                    <h:outputText  value="Value"/>
+                                    <br/>
+
+                                    <p:calendar disabled="#{!adsGroupsEditViewBean.editFlag}" id="sDate" readonlyInput="true"  size="20" value="#{adsGroupsEditViewBean.startDate}"  showOn="button">
+                                        <p:ajax update="eDate"/>
+                                    </p:calendar>
+
+                                    <p:calendar disabled="#{!adsGroupsEditViewBean.editFlag}" id="eDate" readonlyInput="true"   value="#{adsGroupsEditViewBean.endDate}"  showOn="button"  mindate="#{adsGroupsEditViewBean.startDate}" />
+
+                                </h:panelGroup>
+                            </h:panelGroup>
+
+                        </p:column>
+                        <p:column>
+                            <br/>
+                            <p:commandButton disabled="#{!adsGroupsEditViewBean.editFlag}" value="Add Filter" action="#{adsGroupsEditViewBean.addAttribute()}" update="dwhFilters"/>
+                        </p:column>    
+                    </p:panelGrid>
+                    </div>
+                    
+                    <br/>
+                    <br/>
+                    <p:outputLabel value="Selected Filters" />
+                    <br/>
+
+                    <p:dataTable  var="dwh" value="#{adsGroupsEditViewBean.selectedGroup.filterList}" id="attributesList" >
+
+
+                        <p:column headerText="Filters" > 
+                            <h:outputText  value="#{dwh.dwhElementModel.displayName}"/>
+                        </p:column>
+                        <p:column headerText="Operator" >
+                            <h:outputText  value="#{dwh.operatorModel.lable}"/>
+                        </p:column>
+                        <p:column headerText="Values" >
+                            <div class="scrollablediv200">
+                                <p:dataList  value="#{dwh.filterValues}" var="filterValue" rendered="#{dwh.dwhElementModel.displayTypeId == 4}">
+                                    <h:outputText  value="#{filterValue.valueLabel}"/>
+                                </p:dataList>
+                                <h:outputText  class="wrappedText" value="#{dwh.firstOperand}" 
+                                               rendered="#{dwh.dwhElementModel.displayTypeId==1 || dwh.dwhElementModel.displayTypeId == 2}"/>
+                            </div>
+                            <h:panelGroup layout="lineDirection" rendered="#{dwh.dwhElementModel.displayTypeId == 3}">
+
+                                <h:panelGroup layout="pageDirection">
+                                    <p:outputLabel value="Start Date"/>
+                                    <p:calendar id="attrStartDate"  readonlyInput="true" readonly="true" disabled="true" showOn="button" value="#{adsGroupsEditViewBean.convertStringToDate(dwh.firstOperand)}">
+                                        <f:ajax event="click" render="EndDate_"/>
+                                    </p:calendar>
+
+                                </h:panelGroup>
+                                <h:panelGroup  id="EndDate_" layout="pageDirection">
+                                    <p:outputLabel value="End Date"/>
+                                    <p:calendar  id="attrEndDate" readonlyInput="true" showOn="button" readonly="true" disabled="true" value="#{adsGroupsEditViewBean.convertStringToDate(dwh.secondOperand)}"/>
+                                </h:panelGroup>  
+                            </h:panelGroup>
+                        </p:column>
+                        <p:column headerText="Delete Attribute"  >
+                            <h:panelGroup >
+                                <p:commandButton icon="ui-icon-trash" disabled="#{!adsGroupsEditViewBean.editFlag}" id="deleteLink" actionListener="#{adsGroupsEditViewBean.deleteFilters(dwh)}" 
+                                               process="@this" update="attributesList" >
+                                    <p:confirm header="Confirmation" message="Are you sure you want to delete this file?"
+                                                   icon="ui-icon-alert" />
+                                </p:commandButton>
+                            </h:panelGroup>
+                        </p:column>
+                    </p:dataTable>
+                    <p:spacer height="30"/>
+
+                    <!-- Count Targeted Customers-->
+                    <br/>
+                </h:panelGroup>  
+
+            </h:panelGroup>
+
+
+
+
+
+            <div class="btns-table">
+                <p:panelGrid columns="2" rendered="#{!adsGroupsEditViewBean.approvable}">
+                    <p:commandButton styleClass="button" 
+                                     value="Save"
+                                     action="#{adsGroupsEditViewBean.saveGroup()}"
+                                     rendered="#{adsGroupsEditViewBean.editable or adsGroupsEditViewBean.creation}"/>
+
+                    <p:commandButton styleClass="button" 
+                                     value="Cancel"
+                                     action="#{adsGroupsEditViewBean.cancelGroup()}" immediate="true" />
+                </p:panelGrid>
+
+                <p:panelGrid >
+                    <p:commandButton styleClass="button" 
+                                     value="Cancel"
+                                     action="OperationsApproval"  immediate="true" rendered="#{adsGroupsEditViewBean.approvable}" />
+                    <p:commandButton styleClass="button button-last"
+                                     value="Reject"
+                                     rendered="#{adsGroupsEditViewBean.approvable}"
+                                     action="#{adsGroupsEditViewBean.rejectGroup()}" />
+                    <p:commandButton styleClass="button button-last"
+                                     value="Approve"
+                                     rendered="#{adsGroupsEditViewBean.approvable}"
+                                     action="#{adsGroupsEditViewBean.approveGroup()}" />
+                    
+                    
+                </p:panelGrid>
+
+            </div>
+            </div>  
+                
+        </h:form>
+
+    </ui:define>
+</ui:composition>

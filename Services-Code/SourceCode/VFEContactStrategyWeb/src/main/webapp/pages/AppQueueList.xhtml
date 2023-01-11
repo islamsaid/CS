@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/Template/menuTempplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:define name="title">
+        Application Queue List
+    </ui:define>
+
+
+    <ui:define name="content">
+
+        <p:messages id="errors" autoUpdate="true" severity="error info"/>
+        <div class="table_title_text">
+            <p:panelGrid columns="4">
+                <p:outputLabel value="Application Queue List"></p:outputLabel>
+                <p:commandButton value="Create Queue" action="#{queueListBean.createApplicationQueueListener()}">
+                </p:commandButton>
+            </p:panelGrid>
+        </div>
+
+        <div class="searchArea">
+            <h:form id="form">
+                
+                
+                <p:dialog modal="true" id="waitingMsgFun" position="center"
+                          closable="false" resizable="false" draggable=""
+                          widgetVar="waitingMsgFunDlg">
+                    <table class="loading_table">
+                        <tr>
+                            <td align="center"><h:graphicImage library="images"
+                                                               url="/resources/images/loading-x.gif"></h:graphicImage></td>
+                        </tr>
+                        <tr>
+                            <td>Please Wait .......</td>
+                        </tr>
+                    </table>
+                </p:dialog>
+                <p:ajaxStatus onstart="PF('waitingMsgFunDlg').show();"
+                              oncomplete="PF('waitingMsgFunDlg').hide();">
+                </p:ajaxStatus>
+                
+                
+                <div align="center">
+                    <div class="table-responsive serachTabel">
+
+                        <p:dataTable value="#{queueListBean.queueList}" var="queue" rowKey="#{queue.versionId}" styleClass="paddingStyle"
+                                     widgetVar="queueTable" id="queusTable">
+                            <p:column headerText="Application Queue Name" sortBy="#{queue.appName}" 
+                                      filterMatchMode="contains" filterBy="#{queue.appName}">
+                                <p:outputLabel value="#{queue.appName}" styleClass="fixLabel"/></p:column>
+                                
+                            <p:column headerText="Queue type" filterBy="#{queueListBean.queueTypes[queue.queueType].lable}" filterMatchMode="exact" 
+                                      sortBy="#{queueListBean.queueTypes[queue.queueType].lable}">
+                                <f:facet name="filter">
+                                    <p:selectOneMenu onchange="PF('queueTable').filter()" >
+                                        <f:selectItem itemLabel="Select One" itemValue="#{null}" noSelectionOption="true"/>  
+                                        <f:selectItems value="#{queueListBean.queueTypes.entrySet()}" var="Type" 
+                                                       itemLabel="#{Type.value.lable}" itemValue="#{Type.value.lable}" />
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <p:outputLabel value="#{queueListBean.queueTypes[queue.queueType].lable}" styleClass="fixLabel"></p:outputLabel></p:column>
+                            <p:column headerText="Threshold" sortBy="#{queue.threshold}" 
+                                      filterMatchMode="contains" filterBy="#{queue.threshold}">
+                                <p:outputLabel value="#{queue.threshold}" styleClass="fixLabel"></p:outputLabel></p:column>
+                            <p:column headerText="Creator" filterBy="#{queue.creatorName}" filterMatchMode="contains"
+                                      sortBy="#{queue.creatorName}" >
+                                <p:outputLabel value="#{queue.creatorName}" styleClass="fixLabel"></p:outputLabel></p:column>
+                            <p:column headerText="Status" filterBy="#{queue.statusLabel}" filterMatchMode="exact" 
+                                      sortBy="#{queue.statusLabel}">
+                                <f:facet name="filter">
+                                    <p:selectOneMenu onchange="PF('queueTable').filter()">
+                                        <f:selectItem itemLabel="Select One" itemValue="#{null}" noSelectionOption="true"/>  
+                                        <f:selectItems value="#{queueListBean.operationStatus}" var="status" 
+                                                       itemLabel="#{status.lable}" itemValue="#{status.lable}"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <p:outputLabel value="#{queue.statusLabel}" styleClass="fixLabel"></p:outputLabel></p:column>
+                            <p:column headerText="">
+                                <p:commandButton icon="ui-icon-search" action="#{queueListBean.viewApplicationQueueListener(queue)}"></p:commandButton>
+                                <p:commandButton rendered="#{queue.enableEdit}" icon="ui-icon-pencil"
+                                                 action="#{queueListBean.editApplicationQueueListener(queue)}"/>
+                                <p:commandButton icon="ui-icon-trash" rendered="#{queue.enableDelete}" 
+                                                 action="#{queueListBean.deleteApplicationQueue(queue)}" update="@form">
+                                    <p:confirm header="Confirmation"
+                                               message="Are you sure you want to delete #{queue.appName} ?"
+                                               icon="ui-icon-alert" />
+                                </p:commandButton>
+                            <!--<p:commandButton value="Approve/Reject" action="#{queueListBean.approveApplicationQueue(queue)}"/>-->
+                            </p:column>
+                                
+                        </p:dataTable>
+                    </div>
+                </div>
+            </h:form>
+        </div>
+    </ui:define>
+
+</ui:composition>

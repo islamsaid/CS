@@ -1,0 +1,483 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="/Template/menuTempplate.xhtml">
+
+    <ui:define name="title">
+        Campaign Management
+    </ui:define>
+
+    <ui:define name="content">
+
+        <div class="searchArea">
+
+            <h:form id="form">
+                <p:dialog modal="true" id="waitingMsgFun" position="center"
+                          closable="false" resizable="false" draggable=""
+                          widgetVar="waitingMsgFunDlg">
+                    <table class="loading_table">
+                        <tr>
+                            <td align="center"><h:graphicImage library="images"
+                                                               url="/resources/images/loading-x.gif"></h:graphicImage></td>
+                        </tr>
+                        <tr>
+                            <td>Please Wait .......</td>
+                        </tr>
+                    </table>
+                </p:dialog>
+                <p:ajaxStatus onstart="PF('waitingMsgFunDlg').show();"
+                              oncomplete="PF('waitingMsgFunDlg').hide();"
+                              onsuccess="PF('waitingMsgFunDlg').hide();">
+                </p:ajaxStatus>
+
+                <div id="Messages" align="center">
+                    <p:messages id="msgs" showDetail="false" autoUpdate="true"
+                                closable="true" />
+                </div>
+                <div class="table_title_text">
+                    <p:panelGrid columns="4">
+                        <p:outputLabel value="Create Campaign"
+                                       rendered="#{campaignManagementBean.selectedCampaign.isCreationMode}"></p:outputLabel>
+                        <p:outputLabel value="Edit #{campaignManagementBean.selectedCampaign.campaignName}"
+                                       rendered="#{campaignManagementBean.selectedCampaign.isEditMode}"></p:outputLabel>
+                        <p:outputLabel value="View #{campaignManagementBean.selectedCampaign.campaignName}"
+                                       rendered="#{campaignManagementBean.selectedCampaign.isViewMode}"></p:outputLabel>
+                        <p:outputLabel value="Approve #{campaignManagementBean.selectedCampaign.campaignName}"
+                                       rendered="#{campaignManagementBean.selectedCampaign.approvalMode}"></p:outputLabel>
+                    </p:panelGrid>
+                </div>
+
+
+
+                <div align="center">
+                    <p:panelGrid columns="3" layout="grid">
+                        <p:panelGrid columns="1" layout="grid" style="display:none"><!--update export-->
+                            
+                            <p:commandButton value="Export Suspended" id="exportSuspended" immediate="true"
+                                             rendered="#{campaignManagementBean.renderExport()}" ajax="false" 
+                                               onclick="PrimeFaces.monitorDownload(null, stop)">
+                                <p:fileDownload  value="#{campaignManagementBean.downloadCSV(campaignManagementBean.suspended)}" />
+                            </p:commandButton>
+                            <p:commandButton value="Export Unsuspended" id="exportUnSuspended" immediate="true"
+                                             rendered="#{campaignManagementBean.renderExport()}" ajax="false" 
+                                               onclick="PrimeFaces.monitorDownload(null, stop)">
+                                <p:fileDownload  value="#{campaignManagementBean.downloadCSV(campaignManagementBean.unSuspended)}" />
+                            </p:commandButton>
+                            <p:remoteCommand name="stop" action="#{campaignManagementBean.generateMessage()}" update="@form"/>
+
+                            
+                            <p:commandButton id="showemptymessage" action="#{campaignManagementBean.generateMessage()}" style="visibility: hidden;"/>
+                        </p:panelGrid>
+                        
+                        <p:panelGrid columns="2" layout="grid" id="bttnspanel">
+                            <p:commandButton icon="ui-icon-play" action="#{campaignManagementBean.resumeCampaign()}"  disabled="#{campaignManagementBean.selectedCampaign.isViewMode}" rendered="#{campaignManagementBean.selectedCampaign.enableStart }" immediate="true" ajax="true" update="form:bttnspanel"><p:outputLabel styleClass="lH34" value="Play Campaign"/></p:commandButton>
+                            <p:commandButton icon="ui-icon-pause"  action="#{campaignManagementBean.pauseCampaign()}" disabled="#{campaignManagementBean.selectedCampaign.isViewMode}"  rendered="#{campaignManagementBean.selectedCampaign.enablePause }" immediate="true" ajax="true" update="form:bttnspanel"><p:outputLabel styleClass="lH34" value="Pause Campaign"/></p:commandButton>
+                            <p:commandButton icon="ui-icon-stop"  action="#{campaignManagementBean.stopCampaign()}" disabled="#{campaignManagementBean.selectedCampaign.isViewMode}"  rendered="#{campaignManagementBean.selectedCampaign.enableStop }"  immediate="true" ajax="true" update="form:bttnspanel"><p:outputLabel styleClass="lH34" value="Stop Campaign"/></p:commandButton>
+                        </p:panelGrid>  
+                        
+                    </p:panelGrid>
+                    <p:panelGrid columns="2" layout="grid">
+                        <p:panelGrid columns="1" layout="grid">
+                            <p:panelGrid>
+                                <p:outputLabel value="Campaign Name"/>
+                                <p:outputLabel value="*" style="color: red" ></p:outputLabel>
+                            </p:panelGrid>
+                            <p:inputText value="#{campaignManagementBean.selectedCampaign.campaignName}" 
+                                         readonly="#{!campaignManagementBean.selectedCampaign.isCreationMode}" 
+                                             onkeydown="noArabicNoApostropheNoQuotationMark();"
+                                             onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                             onkeypress="noArabicNoApostropheNoQuotationMark();"
+                                         binding="#{nameBinding}"
+                                         id="CampaignName" 
+                                         maxlength="30">
+                                <!--<p:ajax process="@this"></p:ajax>-->
+                            </p:inputText>
+                        </p:panelGrid>
+                        <p:panelGrid columns="1" layout="grid">
+                            <p:panelGrid>
+                                <h:outputText value="Campaign Start"/>
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:calendar value="#{campaignManagementBean.selectedCampaign.startDate}" 
+                                        disabled="#{!campaignManagementBean.selectedCampaign.isCreationMode}" binding="#{startBinding}"
+                                        id="CampaignStart" 
+                                        pattern="MM/dd/yyyy HH:mm:ss"
+                                        mindate="#{campaignManagementBean.currentDate}">
+                                <p:ajax process="@this"></p:ajax>
+
+                            </p:calendar>
+                        </p:panelGrid>
+                    </p:panelGrid>
+                    <p:panelGrid columns="2" layout="grid">
+                        <p:panelGrid columns="1" layout="grid">
+                            <p:panelGrid>
+                                <h:outputText value="Campaign End"/>
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:calendar  value="#{campaignManagementBean.selectedCampaign.endDate}"  
+                                         disabled="#{campaignManagementBean.selectedCampaign.isViewMode}"
+                                         binding="#{endBinding}"  pattern="MM/dd/yyyy HH:mm:ss"
+                                         mindate="#{campaignManagementBean.currentDate}"
+                                         id="CampaignEndCalendar">
+                                <p:ajax process="@this"></p:ajax>
+
+                            </p:calendar>
+                        </p:panelGrid>
+                        <p:panelGrid columns="1" layout="grid">
+                            <p:panelGrid>
+                                <h:outputText value="Campaign Priority"/>
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:spinner value="#{campaignManagementBean.selectedCampaign.priority}" 
+                                       readonly="#{!campaignManagementBean.selectedCampaign.isCreationMode}" 
+                                       binding="#{priorityBinding}" min="1" max="999" maxlength="3" id="priorityID" validator="#{campaignManagementBean.requiredFieldsValidator}" >
+                                <f:attribute name="nameAttr" value="#{nameBinding}"></f:attribute>
+                                <f:attribute name="endDateAttr" value="#{endBinding}"></f:attribute>
+                                <f:attribute name="startDateAttr" value="#{startBinding}"></f:attribute>
+                                <f:attribute name="arabicAttr" value="#{arabicBinding}"></f:attribute>
+                                <f:attribute name="englishAttr" value="#{englishBinding}"></f:attribute>
+                                <f:attribute name="campDescAttr" value="#{campDescBinding}"></f:attribute>
+                                <f:attribute name="targetedAttr" value="#{targetedBinding}"></f:attribute>
+                                <f:attribute name="commAttr" value="#{commBinding}"></f:attribute>
+                                <f:attribute name="percentageAttr" value="#{percentageBinding}"></f:attribute>
+                                <f:attribute name="serviceAttr" value="#{serviceBinding}"></f:attribute>
+                            </p:spinner>
+                        </p:panelGrid>
+                    </p:panelGrid>
+                    <p:panelGrid columns="1" layout="grid">
+
+                        <p:panelGrid>
+                            <h:outputText value="Arabic Script"/>
+                            <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                        </p:panelGrid>
+                        <p:inputTextarea value="#{campaignManagementBean.selectedCampaign.arabicScript}" 
+                                         readonly="#{!campaignManagementBean.selectedCampaign.isCreationMode}"
+                                         autoResize="false"
+                                             onkeydown="noArabicNoApostropheNoQuotationMark();"
+                                             onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                             onkeypress="noArabicNoApostropheNoQuotationMark();"
+                                         binding="#{arabicBinding}" maxlength="2000">
+                            <!--<p:ajax process="@this"></p:ajax>-->
+                        </p:inputTextarea>
+
+
+                    </p:panelGrid>
+
+                    <p:panelGrid columns="1" layout="grid">
+
+                        <p:panelGrid>
+                            <h:outputText value="English Script"/>
+                            <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                        </p:panelGrid>
+                        <p:inputTextarea value="#{campaignManagementBean.selectedCampaign.englishScript}" 
+                                         readonly="#{!campaignManagementBean.selectedCampaign.isCreationMode}"
+                                         autoResize="false"
+                                             onkeydown="noArabicNoApostropheNoQuotationMark();"
+                                             onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                             onkeypress="noArabicNoApostropheNoQuotationMark();"
+                                         binding="#{englishBinding}" maxlength="2000">
+                            <!--<p:ajax process="@this"></p:ajax>-->
+                        </p:inputTextarea>
+
+
+                    </p:panelGrid>
+
+                    <p:panelGrid columns="1" layout="grid">
+
+                        <p:panelGrid>
+                            <h:outputText value="Campaign Description"/>
+                            <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                        </p:panelGrid>
+                        <p:inputTextarea value="#{campaignManagementBean.selectedCampaign.campaignDescription}" 
+                                         readonly="#{!campaignManagementBean.selectedCampaign.isCreationMode}"
+                                         autoResize="false"
+                                             onkeydown="noArabicNoApostropheNoQuotationMark();"
+                                             onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                             onkeypress="noArabicNoApostropheNoQuotationMark();"
+                                         binding="#{campDescBinding}" maxlength="300">
+                            <!--<p:ajax process="@this"></p:ajax>-->
+                        </p:inputTextarea>
+
+
+                    </p:panelGrid>
+                    <p:panelGrid columns="2" layout="grid">
+                        <p:panelGrid columns="1" layout="grid">
+                            <p:panelGrid>
+                                <h:outputText value="Max targeted customers"/>
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:spinner value="#{campaignManagementBean.selectedCampaign.maxTargetedCustomers}" 
+                                       id="TargetedCutomers" validatorMessage="Choose a number within the range of 1 to 99999999 in Max targeted customers "
+                                       readonly="#{campaignManagementBean.selectedCampaign.isViewMode}"
+                                       binding="#{targetedBinding}" min="1" max="99999999" maxlength="8">
+                                <!--<p:ajax event="change" process="@this"/>-->
+                            </p:spinner>
+                        </p:panelGrid>
+                        <p:panelGrid columns="1" layout="grid">
+                            <p:panelGrid>
+                                <h:outputText value="Max number of communications"/>
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:spinner value="#{campaignManagementBean.selectedCampaign.maxNumberOfCommunications}" 
+                                       readonly="#{campaignManagementBean.selectedCampaign.isViewMode}"
+                                       binding="#{commBinding}" min="1" max="99" maxlength="2">
+                                <!--<p:ajax event="change" process="@this"/>-->
+                            </p:spinner>
+                        </p:panelGrid>
+                    </p:panelGrid>
+                    <p:panelGrid columns="2" layout="grid">
+                        <p:panelGrid columns="1" layout="grid">
+                            <p:panelGrid>
+                                <h:outputText value="Targeted services"/>
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:selectManyMenu styleClass="manyCheckBoxs" id="advanced" value="#{campaignManagementBean.selectedServices}" converter="genericConverter"
+                                              var="t" filter="true" filterMatchMode="contains" showCheckbox="true" disabled="#{!campaignManagementBean.selectedCampaign.isCreationMode}" binding="#{serviceBinding}">
+                                <p:ajax process="@this"></p:ajax>
+                                <f:selectItems value="#{campaignManagementBean.servicesList}" var="service" itemLabel="#{service.serviceName}" itemValue="#{service}" />
+
+                                <p:column>
+                                    <h:outputText value="#{t.serviceName}" />
+                                </p:column>
+
+                            </p:selectManyMenu>
+                        </p:panelGrid>
+                        <p:panelGrid columns="1" layout="grid">
+                            <p:panelGrid>
+                                <h:outputText value="Control percentage"/>
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:spinner value="#{campaignManagementBean.selectedCampaign.controlPercentage}" 
+                                       readonly="#{!campaignManagementBean.selectedCampaign.isCreationMode}"
+                                       binding="#{percentageBinding}" min="0" max="100" validatorMessage="Invalid Control Percentage" 
+                                       maxlength="3"
+                                       suffix="%">
+                                <!--<p:ajax event="change" process="@this"/>-->
+
+                            </p:spinner>
+                        </p:panelGrid>
+                    </p:panelGrid>
+                    <h:panelGrid columns="2" cellpadding="10" class="firstTD100">
+                        <h:panelGroup >
+                            <p:outputLabel value="Filter Criteria:" />
+                            <p:outputLabel value="*" style="color: red" ></p:outputLabel>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <h:selectOneRadio id="whiteListType" disabled="#{!campaignManagementBean.selectedCampaign.isCreationMode}"
+                                              layout="pageDirection"
+                                              value="#{campaignManagementBean.selectedCampaign.filterType}" converter="GroupTypeConverter" >
+                                <f:selectItems value="#{campaignManagementBean.filterTypesList}" var="gType" itemLabel="#{gType.lable}" itemValue="#{gType}"  />
+                                <f:ajax render="criteriaAndUpload" event="change"/>
+                            </h:selectOneRadio>
+                        </h:panelGroup>
+                    </h:panelGrid>
+
+                    <h:panelGroup id="criteriaAndUpload" class="newTableStyle">
+
+                        <h:panelGroup id="uploadAndParseFile" rendered="#{campaignManagementBean.selectedCampaign.filterType.id eq 2}">
+                            <p:outputLabel value="Note: The supported file format is .CSV" styleClass="W100 TAC pTop15" 
+                                   style="text-align:left !important; margin-left: 23px;"/>
+                    <br/> 
+                            <h:panelGrid columns="1">
+                                <h:panelGroup >
+                                    <p:fileUpload disabled="#{campaignManagementBean.selectedCampaign.isViewMode}" label="Browse Campaign Files" update="uploadAndParseFile" fileUploadListener="#{uploadAndParseFileBean.handleFileUpload}" mode="advanced"  
+                                                  multiple="true"   allowTypes="/(\.|\/)(csv)$/" 
+                                                  sizeLimit="#{uploadAndParseFileBean.retrieveUploadFileSizeLimit()}" invalidFileMessage="Invalid File Type"
+                                                  invalidSizeMessage="Invalid File Size, which is above file size allowed [#{uploadAndParseFileBean.uploadSizeLimit / 1000000} MB]."
+                                                  onstart="PF('waitingMsgFunDlg').show();" oncomplete="PF('waitingMsgFunDlg').hide();">
+
+                                    </p:fileUpload>
+                                </h:panelGroup>
+                                <br/>
+                                <p:dataTable value="#{uploadAndParseFileBean.groupFiles}" id="uploadedFiles" var="file" >
+                                    <f:facet name="header">
+                                        Uploaded Files
+                                    </f:facet>
+                                    <p:column headerText="File Name">
+                                        <h:outputText value="#{file.fileName}"/>
+                                    </p:column>
+                                    <p:column headerText="Delete">          
+                                        <h:panelGroup >
+                                            <p:commandButton process="@this" icon="ui-icon-trash" action="#{uploadAndParseFileBean.removeFile(file)}" update="uploadedFiles" rendered="#{!campaignManagementBean.selectedCampaign.isViewMode}" >
+                                                <p:confirm header="Confirmation" message="Are you sure you want to delete this file?"
+                                                           icon="ui-icon-alert" />
+                                            </p:commandButton>                            </h:panelGroup>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:panelGrid>
+                        </h:panelGroup>
+
+
+
+                        <h:panelGroup id="dwhFilters" rendered="#{campaignManagementBean.selectedCampaign.filterType.id eq 1}">
+                            <!--   Insert Attribute         -->
+                            <div class="equalTable">
+                            <p:panelGrid id="newFilterPnl" columns="4" styleClass="equalTable">
+                                <f:facet name="header">
+                                    Insert Filter
+                                </f:facet>
+                                <p:column  headerText="Filter">
+                                    <f:facet name="header">
+                                        Filter
+                                    </f:facet>
+                                    <p:outputLabel value="Filters"/>
+                                    <br/>
+                                    <p:selectOneMenu disabled="#{campaignManagementBean.selectedCampaign.isViewMode}" id="selectedElementmenu" filter="true" filterMatchMode="contains" value="#{campaignManagementBean.newFilter.dwhElementModel}" 
+                                                     converter="dwhElementModelConverter" >
+                                        <f:selectItems value="#{campaignManagementBean.attrValues}" var="att" 
+                                                       itemLabel="#{att.displayName}" itemValue="#{att}"/>
+                                        <f:ajax event="change" render="newFilterPnl"
+                                                listener="#{campaignManagementBean.fillOperators()}"/>
+                                    </p:selectOneMenu>
+                                </p:column>   
+                                <p:column headerText="Operators">
+                                    <f:facet name="header">
+                                        Operator
+                                    </f:facet>
+                                    <p:outputLabel value="Operator"/>
+                                    <br/>
+                                    <p:selectOneMenu disabled="#{campaignManagementBean.selectedCampaign.isViewMode}" id="operators" value="#{campaignManagementBean.newFilter.operatorModel}" converter="dwhOperatorsConverter" >
+                                        <f:selectItems value="#{campaignManagementBean.operators}" var="operators" itemLabel="#{operators.lable}" itemValue="#{operators}" />
+                                        <f:ajax event="change" render="newFilterPnl"/>
+                                    </p:selectOneMenu>
+                                </p:column>
+                                <p:column headerText="Value">
+                                    <h:panelGroup id="values">
+                                        <h:panelGroup  rendered="#{campaignManagementBean.multiSelectAttributeVisible}"  >
+                                            <h:outputText  value="Element Values"/>
+                                            <br/>
+                                            <p:selectManyMenu disabled="#{campaignManagementBean.selectedCampaign.isViewMode}" value="#{campaignManagementBean.newFilter.selectedElementValues}" converter="valuesConverter" label="#{val.valueLabel}"  >
+                                                <f:selectItems value="#{campaignManagementBean.newFilter.dwhElementModel.multiSelectionValues}" var="val" itemLabel="#{val.valueLabel}" itemValue="#{val}"/>          
+                                            </p:selectManyMenu>
+                                        </h:panelGroup>
+                                        <h:panelGroup  rendered="#{campaignManagementBean.numberAttributeVisible}" >
+                                            <h:outputText   value="Value (Numbers Only)"/>
+                                            <br/>
+                                            <p:inputText disabled="#{campaignManagementBean.selectedCampaign.isViewMode}" id="selectedVal_" value="#{campaignManagementBean.query}" onkeydown="return isNumber();" onkeypress="return isNumber();" maxlength="64" converterMessage="Value must be integer only.">
+                                                <f:convertNumber  integerOnly="true"/>
+                                            </p:inputText>
+                                        </h:panelGroup>
+                                        <h:panelGroup  rendered="#{campaignManagementBean.stringAttributeVisible }" >
+                                            <h:outputText  value="Value"/>
+                                            <br/>
+                                            <p:inputText disabled="#{campaignManagementBean.selectedCampaign.isViewMode}" maxlength="200" id="selectedIntVal_" onkeydown="noArabicNoSpecialChars_();" onkeyup="noArabicNoSpecialChars_();" onkeypress="noArabicNoSpecialChars_();" value="#{campaignManagementBean.query}" />
+                                        </h:panelGroup>
+
+                                        <h:panelGroup  id="cale" rendered="#{campaignManagementBean.dateAttributeVisible}">
+                                            <h:outputText  value="Value"/>
+                                            <br/>
+
+                                            <p:calendar disabled="#{campaignManagementBean.selectedCampaign.isViewMode}" id="sDate" readonlyInput="true"  size="20" value="#{campaignManagementBean.startDate}"  showOn="button">
+                                                <p:ajax update="eDate"/>
+                                            </p:calendar>
+
+                                            <p:calendar disabled="#{campaignManagementBean.selectedCampaign.isViewMode}" id="eDate" readonlyInput="true"   value="#{campaignManagementBean.endDate}"  showOn="button"  mindate="#{campaignManagementBean.startDate}" />
+
+                                        </h:panelGroup>
+                                    </h:panelGroup>
+
+                                </p:column>
+                                <p:column>
+                                    <br/>
+                                    <p:commandButton disabled="#{campaignManagementBean.selectedCampaign.isViewMode}" value="Add Filter" action="#{campaignManagementBean.addAttribute()}" update="dwhFilters" styleClass="addFilterBtn"/>
+                                </p:column>    
+                            </p:panelGrid>
+                            </div>
+                            <br/>
+                            <br/>
+                            <p:outputLabel value="Selected Filters" />
+                            <br/>
+
+                            <p:dataTable  var="dwh" value="#{campaignManagementBean.selectedCampaign.filterList}" id="attributesList"  >
+
+
+                                <p:column headerText="Filters" > 
+                                    <h:outputText  value="#{dwh.dwhElementModel.displayName}"/>
+                                </p:column>
+                                <p:column headerText="Operator" >
+                                    <h:outputText  value="#{dwh.operatorModel.lable}"/>
+                                </p:column>
+                                <p:column headerText="Values" >
+                                    <div class="scrollablediv200">
+                                        <p:dataList  value="#{dwh.filterValues}" var="filterValue" rendered="#{dwh.dwhElementModel.displayTypeId == 4}">
+                                            <h:outputText  value="#{filterValue.valueLabel}"/>
+                                        </p:dataList>
+                                        <h:outputText  class="wrappedText" value="#{dwh.firstOperand}" 
+                                                       rendered="#{dwh.dwhElementModel.displayTypeId==1 || dwh.dwhElementModel.displayTypeId == 2}"/>
+                                    </div>
+                                    <h:panelGroup layout="lineDirection" rendered="#{dwh.dwhElementModel.displayTypeId == 3}">
+
+                                        <h:panelGroup layout="pageDirection">
+                                            <p:outputLabel value="Start Date"/>
+                                            <p:calendar id="attrStartDate"  readonlyInput="true" readonly="true" disabled="true" showOn="button" value="#{campaignManagementBean.convertStringToDate(dwh.firstOperand)}">
+                                                <f:ajax event="click" render="EndDate_"/>
+                                            </p:calendar>
+
+                                        </h:panelGroup>
+                                        <h:panelGroup  id="EndDate_" layout="pageDirection">
+                                            <p:outputLabel value="End Date"/>
+                                            <p:calendar  id="attrEndDate" readonlyInput="true" showOn="button" readonly="true" disabled="true" value="#{campaignManagementBean.convertStringToDate(dwh.secondOperand)}"/>
+                                        </h:panelGroup>  
+                                    </h:panelGroup>
+                                </p:column>
+                                <p:column headerText="Delete Attribute"  >
+                                    <h:panelGroup >
+                                        <p:commandButton disabled="#{campaignManagementBean.selectedCampaign.isViewMode}" id="deleteLink" actionListener="#{campaignManagementBean.deleteFilters(dwh)}" 
+                                                     icon="ui-icon-trash"  process="@this" update="attributesList" >
+                                        </p:commandButton>  
+                                    </h:panelGroup>
+                                </p:column>
+                            </p:dataTable>
+                            <p:spacer height="30"/>
+
+                            <!-- Count Targeted Customers-->
+                            <br/>
+                        </h:panelGroup>  
+
+                    </h:panelGroup>
+
+                    <p:panelGrid columns="1" layout="grid" rendered="#{campaignManagementBean.selectedCampaign.isEditMode}">
+                        <p:panelGrid columns="1" layout="grid" >
+                            <h:outputText value="Description"/>
+                            <p:inputTextarea value="#{campaignManagementBean.selectedCampaign.editedDescription}"
+                                             onkeydown="noArabicNoApostropheNoQuotationMark();"
+                                             onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                             autoResize="false"
+                                             onkeypress="noArabicNoApostropheNoQuotationMark();" maxlength="500">
+                                <p:ajax process="@this"/>
+                            </p:inputTextarea>
+                        </p:panelGrid>
+                    </p:panelGrid>
+                    <p:panelGrid rendered="#{!campaignManagementBean.selectedCampaign.approvalMode}">
+                        <p:commandButton value="Cancel" action="CampaignList" 
+                                         style="float: right !important;"
+                                         immediate="true" rendered="#{!campaignManagementBean.selectedCampaign.approvalMode}"></p:commandButton>
+                        <p:commandButton value="Save" action="#{campaignManagementBean.saveCampaign}"
+                                         style="float: right !important;"
+                                         rendered="#{!campaignManagementBean.selectedCampaign.isViewMode}"></p:commandButton>
+                    </p:panelGrid>
+
+                    <p:panelGrid rendered="#{campaignManagementBean.selectedCampaign.approvalMode}">
+                        <p:commandButton styleClass="button" 
+                                         style="float: right !important;"
+                                         value="Cancel"
+                                         action="OperationsApproval"  immediate="true" rendered="#{campaignManagementBean.selectedCampaign.approvalMode}"/>
+                        <p:commandButton styleClass="button button-last"
+                                         style="float: right !important;"
+                                         value="Reject"
+                                         rendered="#{campaignManagementBean.selectedCampaign.approvalMode}"
+                                         action="#{campaignManagementBean.rejectCampaignOperation()}" />
+                        <p:commandButton styleClass="button button-last"
+                                         style="float: right !important;"
+                                         value="Approve"
+                                         rendered="#{campaignManagementBean.selectedCampaign.approvalMode}"
+                                         action="#{campaignManagementBean.approveCampaignOperation()}" />
+                    </p:panelGrid>
+                </div>
+
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

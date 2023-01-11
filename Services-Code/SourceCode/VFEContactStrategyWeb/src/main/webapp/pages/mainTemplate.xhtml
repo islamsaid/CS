@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <h:head dir="#{loggedInUserBean.direction}">
+        <title><ui:insert name="title"/></title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<link rel="apple-touch-icon" sizes="57x57" href="#{request.contextPath}/resources/images/favicons/apple-icon-57x57.png"></link>
+<link rel="assets/favicon/apple-touch-icon" sizes="60x60" href="#{request.contextPath}/resources/images/favicons/apple-icon-60x60.png"></link>
+<link rel="assets/favicon/apple-touch-icon" sizes="72x72" href="#{request.contextPath}/resources/images/favicons/apple-icon-72x72.png"></link>
+<link rel="assets/favicon/apple-touch-icon" sizes="76x76" href="#{request.contextPath}/resources/images/favicons/apple-icon-76x76.png"></link>
+<link rel="assets/favicon/apple-touch-icon" sizes="114x114" href="#{request.contextPath}/resources/images/favicons/apple-icon-114x114.png"></link>
+<link rel="assets/favicon/apple-touch-icon" sizes="120x120" href="#{request.contextPath}/resources/images/favicons/apple-icon-120x120.png"></link>
+<link rel="assets/favicon/apple-touch-icon" sizes="144x144" href="#{request.contextPath}/resources/images/favicons/apple-icon-144x144.png"></link>
+<link rel="assets/favicon/apple-touch-icon" sizes="152x152" href="#{request.contextPath}/resources/images/favicons/apple-icon-152x152.png"></link>
+<link rel="assets/favicon/apple-touch-icon" sizes="180x180" href="#{request.contextPath}/resources/images/favicons/apple-icon-180x180.png"></link>
+<link rel="icon" type="image/png" sizes="192x192"  href="#{request.contextPath}/resources/images/favicons/android-icon-192x192.png"></link>
+<link rel="icon" type="image/png" sizes="32x32" href="#{request.contextPath}/resources/images/favicons/favicon-32x32.png"></link>
+<link rel="icon" type="image/png" sizes="96x96" href="#{request.contextPath}/resources/images/favicons/favicon-96x96.png"></link>
+<link rel="icon" type="image/png" sizes="16x16" href="#{request.contextPath}/resources/images/favicons/favicon-16x16.png"></link>
+    
+<link rel="manifest" href="#{request.contextPath}/resources/images/favicons/manifest.json"></link>
+<meta name="msapplication-TileColor" content="#ffffff"></meta>
+<meta name="msapplication-TileImage" content="#{request.contextPath}/resources/images/favicons/ms-icon-144x144.png"></meta>
+<meta name="theme-color" content="#ffffff"></meta>
+
+<link href="#{request.contextPath}/resources/css/innerPages.css" rel="stylesheet"></link>
+<link href="#{request.contextPath}/resources/css/useful.css" rel="stylesheet"></link>
+    </h:head>
+    <h:body dir="#{loggedInUserBean.direction}">
+    
+        <f:view locale="#{loggedInUserBean.locale}">
+        
+            <h:form dir="#{loggedInUserBean.direction}">
+            
+                <div class="innerHeader Mbottom20">
+        		</div>
+                
+                <div class="Fleft Pleft20 Pright10">
+                	<div class="mainMenuHolder P10">
+                    	<p:menu rendered="#{loggedInUserBean.menuModel ne null}" model="#{loggedInUserBean.menuModel}" toggleable="true" style="width:500px"/>
+                    </div>
+                </div>
+                
+                <div class="rest Pleft10 Pright20">
+                	<div class="contentHolder P10">
+                    	<ui:insert name="content"></ui:insert>
+                    </div>
+                </div>
+                
+            </h:form>
+            
+            
+        </f:view>
+        
+        
+    </h:body>
+</html>

@@ -1,0 +1,236 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/Template/menuTempplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html">
+
+    <ui:define name="title">
+        SMS Bulk Upload
+    </ui:define>
+
+    <div class="innerHeader Mbottom20">
+    </div>
+
+    <ui:define name="content">
+        <h:form id="form">
+            <p:dialog modal="true" id="waitingMsgFun" position="center"
+                      closable="false" resizable="false" draggable=""
+                      widgetVar="waitingMsgFunDlg">
+                <table class="loading_table">
+                    <tr>
+                        <td align="center"><h:graphicImage library="images"
+                                                           url="/resources/images/loading-x.gif"></h:graphicImage></td>
+                    </tr>
+                    <tr>
+                        <td>Please Wait .......</td>
+                    </tr>
+                </table>
+            </p:dialog>
+            <p:ajaxStatus onstart="PF('waitingMsgFunDlg').show();"
+                          oncomplete="PF('waitingMsgFunDlg').hide();"
+                          onsuccess="PF('waitingMsgFunDlg').hide();">
+            </p:ajaxStatus>
+
+            <div id="Messages" align="center">
+                <p:messages id="msgs" showDetail="false" autoUpdate="true"
+                            closable="true" />
+            </div>
+
+
+            <div class="table_title_text">
+                <p:panelGrid columns="1" style="width:100%">
+                    <p:outputLabel value="SMS Bulk Upload"></p:outputLabel>
+                </p:panelGrid>
+            </div>
+
+            <div class="searchArea">
+                <p:panelGrid columns="2" styleClass="W100 equalWidthTd">
+                    <p:panelGrid columns="1">
+                        <p:outputLabel value="Service Name"><p:outputLabel value="*" style="color: red" /></p:outputLabel>
+                        <p:selectOneMenu id="SERVICE" value="#{sMSBulkUploadBean.serviceName}" style="width:150px" disabled="#{!sMSBulkUploadBean.editableService}">
+                            <f:ajax event="change" listener="#{sMSBulkUploadBean.handleServiceFilled()}"/>
+                            <f:selectItem itemLabel="Select Service" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{sMSBulkUploadBean.serviceList}" var="service" itemLabel="#{service.serviceName}" itemValue="#{service.serviceName}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    
+                    <!-- CR 1901 | eslam.ahmed -->
+                    <p:panelGrid columns="1">
+                        <p:outputLabel value="Service Password"><p:outputLabel value="*" style="color: red" /></p:outputLabel>
+                        <p:password value="#{sMSBulkUploadBean.servicePassword}" inline="true" redisplay="true"/>
+                    </p:panelGrid>
+                    <!-- END CR 1901 | eslam.ahmed -->
+                    
+                    <p:panelGrid columns="1">
+                        <p:outputLabel value="Originator"><p:outputLabel value="*" style="color: red" /></p:outputLabel>
+                        <p:selectOneMenu value="#{sMSBulkUploadBean.originatorValue}" >
+                            <f:selectItem itemLabel="Select Originator" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{sMSBulkUploadBean.originatorValues.entrySet()}" var="originator"  itemLabel="#{originator.value.lable}" itemValue="#{originator.value.lable}" ></f:selectItems>
+                            <p:ajax event="change"  process="@this" listener="#{sMSBulkUploadBean.validateOriginatorValue()}" />
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    
+                    
+                    <p:panelGrid columns="1">
+                        <p:outputLabel value="Originator Type"><p:outputLabel value="*" style="color: red" /></p:outputLabel>
+                        <p:selectOneMenu id="ORIGINATOR_TYPE" value="#{sMSBulkUploadBean.originatorType}" style="width:150px">
+                            <f:ajax event="change" listener="#{sMSBulkUploadBean.handleOriginatorType()}"/>
+                            <f:selectItem itemLabel="Select Originator type" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{sMSBulkUploadBean.originatorTypes}" var="originatorType" itemLabel="#{originatorType.originatorName}" itemValue="#{originatorType.originatorType}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    
+                    
+                    <p:panelGrid columns="1">
+                        <p:outputLabel value="Do not apply"></p:outputLabel>
+                        <p:selectBooleanCheckbox value="#{sMSBulkUploadBean.doNotApplyFlag}" >
+                            <f:ajax event="change" />
+                        </p:selectBooleanCheckbox>
+                    </p:panelGrid>
+                </p:panelGrid>
+                <br/>
+                <h:panelGroup styleClass="serachTabel">
+                    <p:panelGrid columns="2" >
+                        <h:panelGroup id="uploadAndParseFile"  >
+
+                            <p:outputLabel value="SMS Files"><p:outputLabel value="*" style="color: red" /></p:outputLabel>
+                            <br/>
+                            <p:outputLabel value="Note: The supported file format is .CSV. Maximum number of files is 4." styleClass="W100 TAC pTop15" 
+                                           style="text-align:left !important; margin-left: 23px;"/>
+                            <h:panelGrid  columns="1" styleClass="W100">
+                                <h:panelGroup>
+                                    <p:fileUpload label="Browse SMS Files" update="@form" process="@form" fileUploadListener="#{sMSBulkUploadBean.handleSMSBulkFileUpload}" mode="advanced"  
+                                                  invalidFileMessage="Supported file format is .CSV"
+                                                  sizeLimit="#{sMSBulkUploadBean.uploadSizeLimit}" onstart="PF('waitingMsgFunDlg').show();" oncomplete="PF('waitingMsgFunDlg').hide();"
+                                                  multiple="true" allowTypes="/(\.|\/)(csv)$/" >
+                                    </p:fileUpload>
+                                </h:panelGroup>
+
+
+                                <br/>
+                                <p:dataTable value="#{sMSBulkUploadBean.uploadedFiles}" id="uploadedFiles" var="file">
+                                    <f:facet name="header">
+                                        Uploaded SMS Files
+                                    </f:facet>
+                                    <p:column headerText="File Name">
+                                        <h:outputText value="#{file.name}"/>
+                                    </p:column>
+                                    <p:column headerText="Total Number Of Records">
+                                        <h:outputText value="#{file.totalRecordCount}"/>
+                                    </p:column>
+                                    <p:column headerText="Successful">
+                                        <h:outputText value="#{file.successRecordCount}"/>
+                                    </p:column>
+                                    <p:column headerText="Failure">
+                                        <h:outputText value="#{file.failedRecordCount}"/>
+                                    </p:column>
+                                    <p:column headerText="Delete">  
+                                        <p:commandButton process="@this" icon="ui-icon-trash" id="deleteLink1" title="Delete this File" action="#{sMSBulkUploadBean.removeFile(file)}"
+                                                         update="uploadedFiles form:SERVICE" >
+                                            <p:confirm header="Confirmation" message="Are you sure you want to delete #{file.name}?" icon="ui-icon-alert" />
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:dataTable>
+
+                                <p:commandButton rendered="#{sMSBulkUploadBean.show}" value="Download All Failure Records" ajax="false" id="btn_exporter">
+                                    <p:dataExporter type="csv" target="tbl" fileName="FailureSMSs" />
+                                </p:commandButton>
+
+                                <p:dataTable id="tbl" rendered="false" var="failure" value="#{sMSBulkUploadBean.failureSMSRows}">
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="MSISDN" />
+                                        </f:facet>
+                                        <h:outputText value="#{failure.destinationMSISDN}" />
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Message language" />
+                                        </f:facet>
+                                        <h:outputText value="#{failure.languageText}" />
+                                    </p:column>
+
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Message Script" />
+                                        </f:facet>
+                                        <h:outputText value="#{failure.messageText}" />
+                                    </p:column>
+
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Message Priority" />
+                                        </f:facet>
+                                        <h:outputText value="#{failure.messagePriorityText}" />
+                                    </p:column>
+
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Optional Param1" />
+                                        </f:facet>
+                                        <h:outputText value="#{failure.optionalParam1}" />
+                                    </p:column>
+
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Optional Param2" />
+                                        </f:facet>
+                                        <h:outputText value="#{failure.optionalParam2}" />
+                                    </p:column>
+
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Optional Param3" />
+                                        </f:facet>
+                                        <h:outputText value="#{failure.optionalParam3}" />
+                                    </p:column>
+
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Optional Param4" />
+                                        </f:facet>
+                                        <h:outputText value="#{failure.optionalParam4}" />
+                                    </p:column>
+
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Optional Param5" />
+                                        </f:facet>
+                                        <h:outputText value="#{failure.optionalParam5}" />
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="File Name" />
+                                        </f:facet>
+                                        <h:outputText value="#{failure.fileName}" />
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Failure Reason" />
+                                        </f:facet>
+                                        <h:outputText value="#{failure.errorReason}" />
+                                    </p:column>
+                                </p:dataTable> 
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </p:panelGrid>
+                </h:panelGroup>
+                <div class="btns-table">
+                    <p:panelGrid columns="2">
+                        <p:commandButton styleClass="button" 
+                                         value="Save"
+                                         action="#{sMSBulkUploadBean.save()}"
+                                         ajax="false" onclick="PF('waitingMsgFunDlg').show();"/>
+
+                        <p:commandButton styleClass="button" 
+                                         value="Cancel"
+                                         action="#{sMSBulkUploadBean.cancel()}" immediate="true" />
+                    </p:panelGrid>
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

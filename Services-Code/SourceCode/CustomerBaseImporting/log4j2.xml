@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn">
+    <Properties>
+        <Property name="basePath">/var/log/app</Property>
+    </Properties>
+
+    <Appenders>		
+        <RollingFile name="fileAppender" fileName="${basePath}/app.log" filePattern="${basePath}/app-%i.log">
+            <AdvancedJSONLayout newLine="true" exposeMessageOnRoot="true" exposeContextMapOnRoot="true" exposeLocationOnRoot="true" locationInfo="true">
+                <KeyValuePair key="service" value="customer-importing-service" />
+            </AdvancedJSONLayout>
+            <Policies>
+				<SizeBasedTriggeringPolicy size="10 MB" />
+            </Policies>
+			<DefaultRolloverStrategy fileIndex="min" max="2"/>
+        </RollingFile>
+       
+        <Console name="console" target="SYSTEM_OUT">
+            <AdvancedJSONLayout newLine="true" exposeMessageOnRoot="true" exposeContextMapOnRoot="true" exposeLocationOnRoot="true" locationInfo="true">
+                <KeyValuePair key="service" value="customer-importing-service" />
+            </AdvancedJSONLayout>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="businessLogger" level="debug" additivity="false">
+            <AppenderRef  ref="fileAppender" level="debug" />
+            <AppenderRef  ref="console" level="debug" />
+        </Logger>
+        <Logger name="errorLogger" level="debug" additivity="false">
+            <AppenderRef  ref="fileAppender" level="debug" />
+            <AppenderRef  ref="console" level="debug" />
+        </Logger>
+        <Logger name="livenessLogger" level="debug" additivity="false">
+            <AppenderRef  ref="fileAppender" level="debug" />
+            <AppenderRef  ref="console" level="debug" />
+        </Logger>
+        <Root level="debug" additivity="false">
+            <AppenderRef  ref="console" level="debug" />
+        </Root>
+    </Loggers>
+</Configuration>

@@ -1,0 +1,147 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="/Template/menuTempplate.xhtml">
+
+    <ui:define name="title">
+        Total number of SMS sent to the SMSC by service
+    </ui:define>
+
+
+
+    <ui:define name="content">
+
+        <h:form id="form">
+
+            <p:dialog modal="true" id="waitingMsgFun" position="center"
+                      closable="false" resizable="false" draggable=""
+                      widgetVar="waitingMsgFunDlg">
+                <table class="loading_table">
+                    <tr>
+                        <td align="center"><h:graphicImage library="images"
+                                                           url="/resources/images/loading-x.gif"></h:graphicImage></td>
+                    </tr>
+                    <tr>
+                        <td>Please Wait .......</td>
+                    </tr>
+                </table>
+            </p:dialog>
+            <p:ajaxStatus onstart="PF('waitingMsgFunDlg').show();"
+                          oncomplete="PF('waitingMsgFunDlg').hide();">
+            </p:ajaxStatus>
+
+            <p:messages id="errors" autoUpdate="true" severity="error info"/>
+            <div class="searchArea">
+                <div  class="searchArea" align="left">
+                    <div class="table_title_text">
+                        <p:outputLabel value="Total number of SMS sent to the SMSC by platform by campaign"></p:outputLabel>
+                    </div>
+                    <p:panelGrid id="grid" columns="2"> 
+                        <h:panelGrid id="grid1" columns="1" >
+                            <p:panelGrid>
+                                <p:outputLabel for="FromDateTime" value="From" />
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:calendar id="FromDateTime" value="#{noOfSMSToSMSC.reportsModel.fromDate}" 
+                                        pattern="dd/MM/yyyy HH:mm:ss" binding="#{fromDate}" >
+                            </p:calendar>
+
+                        </h:panelGrid>
+                        <h:panelGrid id="grid2" columns="1" >
+                            <p:panelGrid>
+                                <p:outputLabel for="ToDateTime" value="To" />
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:calendar id="ToDateTime" value="#{noOfSMSToSMSC.reportsModel.toDate}" 
+                                        pattern="dd/MM/yyyy HH:mm:ss" binding="#{toDate}"/>
+                        </h:panelGrid>
+                        <h:panelGrid id="grid3" columns="1" >
+                            <p:panelGrid>
+                                <h:outputLabel value="MSISDN" />
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <h:inputText id="MSISDN_ID" value="#{noOfSMSToSMSC.reportsModel.msisdn}" 
+                                         onkeydown="noArabicNoApostropheNoQuotationMark();" onkeypress="noArabicNoApostropheNoQuotationMark();" onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                         validator="#{noOfSMSToSMSC.requiredFieldsValidator}" maxlength="30">
+                                <f:attribute name="fromDateAttr" value="#{fromDate}"/>
+                                <f:attribute name="toDateAttr" value="#{toDate}"/>
+                                <f:attribute name="serviceNameAttr" value="#{serviceName}"/>
+                                <f:attribute name="smscNameAttr" value="#{smscName}" />
+                            </h:inputText>
+
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="1" cellpadding="5">
+                            <p:panelGrid>
+                                <p:outputLabel  value="Service Name" />
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:selectOneMenu id="service" value="#{noOfSMSToSMSC.reportsModel.serviceId}" 
+                                             style="width:350px" binding="#{serviceName}">
+                                <f:selectItem itemLabel="--No Selection--" noSelectionOption="true" />
+                                <f:selectItems value="#{noOfSMSToSMSC.services}" var="service"
+                                               itemValue="#{service.versionId}" itemLabel="#{service.serviceName}">
+                                </f:selectItems>
+                            </p:selectOneMenu>
+
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" cellpadding="5">
+                            <p:panelGrid>
+                                <p:outputLabel for="smsc" value="SMSC Name" />
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:selectOneMenu id="smsc" value="#{noOfSMSToSMSC.reportsModel.smscId}" 
+                                             style="width:350px"  binding="#{smscName}">
+                                <f:selectItem itemLabel="--No Selection--" noSelectionOption="true"/>
+                                <f:selectItems value="#{noOfSMSToSMSC.smscName}" var="smscs"
+                                               itemLabel="#{smscs.SMSCname}" itemValue="#{smscs.versionId}"/>
+                            </p:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1"></h:panelGrid>
+                        <h:panelGrid columns="1"></h:panelGrid>
+                        <p:panelGrid>
+                            <div class="W100 TAR">
+                                <p:commandButton value="Generate" style="float:none !important;"
+                                                 action="#{noOfSMSToSMSC.retrieveCountOfReciecvedSMS}" 
+                                                 ajax="true" onclick="PF('waitingMsgFunDlg').show();" update="tbl"/>
+                                <p:commandButton value="Cancel" style="float:none !important;"
+                                                 action="reportListPage.xhtml" immediate="true"/>
+                            </div>
+                        </p:panelGrid>
+                    </p:panelGrid>
+                </div>
+            </div>
+
+            <p:dataTable id="tbl" var="model" value="#{noOfSMSToSMSC.reports}"
+                         rows="1" style="margin-bottom:20px" emptyMessage="No Records" >
+
+                <p:column headerText="SMS Count">
+                    <h:outputText value="#{model.count}" />
+                </p:column>
+
+                <p:column headerText="SMSC Name">
+                    <h:outputText value="#{model.smscName}" />
+                </p:column>
+
+                <p:column headerText="Service Name">
+                    <h:outputText value="#{model.serviceName}" />
+                </p:column>
+
+            </p:dataTable>
+            <div class="W100 TAC">
+                <p:commandButton value="Download" ajax="false"  immediate="true"
+                                 style="float:none !important;">
+                    <p:dataExporter type="xls" target="form:tbl" fileName="count" />
+                </p:commandButton>
+            </div>
+
+
+        </h:form>
+    </ui:define>
+
+</ui:composition>

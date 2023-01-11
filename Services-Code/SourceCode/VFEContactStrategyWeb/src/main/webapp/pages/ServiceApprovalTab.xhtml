@@ -1,0 +1,38 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html">
+
+     <p:dataTable var="service" value="#{approvalBean.serviceList}"  paginator="true" rows="10" paginatorPosition="bottom"
+                                             paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                             rowsPerPageTemplate="5,10,15" lazy="true">
+
+                                    <p:column headerText="System name" sortBy="#{service.serviceName}" filterBy="#{service.serviceName}">
+                                        <h:outputText value="#{service.serviceName}" />
+                                    </p:column>
+
+                                    <p:column headerText="Status" sortBy="#{service.statusName}" filterBy="#{service.statusName}">
+                                        <h:outputText value="#{service.statusName}" />
+                                    </p:column>  
+
+                                    <p:column headerText="User" sortBy="#{service.creator}" filterBy="#{service.creator}">
+                                        <h:outputText value="#{service.creator}" />
+                                    </p:column>  
+                                    <p:column >
+                                        <p:commandButton  icon="ui-icon-pencil" action="#{serviceListBean.goToApprovalPage(service)}" />
+                                        <p:commandButton  icon="ui-icon-check"  action="#{approvalBean.approveService(service)}" update="@form">
+                                            <p:confirm header="Confirmation"
+                                                       message="Are you sure you want to approve #{service.serviceName} ?"
+                                                       icon="ui-icon-alert" />
+                                        </p:commandButton>
+                                        <p:commandButton  icon="ui-icon-close" action="#{approvalBean.rejectService(service)}" update="@form">
+                                            <p:confirm header="Confirmation"
+                                                       message="Are you sure you want to reject #{service.serviceName} ?"
+                                                       icon="ui-icon-alert" />
+                                        </p:commandButton>
+
+                                    </p:column>
+                                </p:dataTable>
+           
+
+</ui:composition>

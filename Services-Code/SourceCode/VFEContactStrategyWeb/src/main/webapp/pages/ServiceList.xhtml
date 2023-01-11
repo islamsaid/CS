@@ -1,0 +1,107 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="/Template/menuTempplate.xhtml">
+
+    <ui:define name="title">
+        Service
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+            
+            <p:dialog modal="true" id="waitingMsgFun" position="center"
+                          closable="false" resizable="false" draggable=""
+                          widgetVar="waitingMsgFunDlg">
+                    <table class="loading_table">
+                        <tr>
+                            <td align="center"><h:graphicImage library="images"
+                                                               url="/resources/images/loading-x.gif"></h:graphicImage></td>
+                        </tr>
+                        <tr>
+                            <td>Please Wait .......</td>
+                        </tr>
+                    </table>
+                </p:dialog>
+                <p:ajaxStatus onstart="PF('waitingMsgFunDlg').show();"
+                              oncomplete="PF('waitingMsgFunDlg').hide();">
+                </p:ajaxStatus>
+            
+                  <div id="Messages" align="center">
+                <p:messages id="msgs" showDetail="false" autoUpdate="true"
+                            closable="true" />
+            </div>
+        
+            <div class="table_title_text">
+                <p:panelGrid columns="4">
+                    <p:outputLabel value="Service List"></p:outputLabel>
+                    <p:commandButton value="Create Service" action="#{serviceListBean.goToCreatePage()}"></p:commandButton>
+                </p:panelGrid>
+            </div>
+
+
+            <div class="searchArea">
+                
+                <div align="center">
+                    <div class="table-responsive serachTabel">
+
+
+                        <p:dataTable var="service" value="#{serviceListBean.serviceList}"  paginator="true" rows="10" paginatorPosition="bottom" id="servicesList"
+                         paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                         rowsPerPageTemplate="5,10,15" >
+
+                <p:column headerText="System name" sortBy="#{service.serviceName}" filterBy="#{service.serviceName}">
+                    <h:outputText value="#{service.serviceName}" />
+                </p:column>
+
+                <p:column headerText="Daily quota" sortBy="#{service.dailyQuota}" filterBy="#{service.dailyQuota}">
+                    <h:outputText value="#{service.dailyQuota}" />
+                </p:column>
+
+                 <p:column headerText="Interface" sortBy="#{service.selectedInterfaceTypeModel.lable}" filterBy="#{service.selectedInterfaceTypeModel.lable}">
+                     <h:outputText value="#{service.selectedInterfaceTypeModel.lable}" />
+                </p:column>
+
+                <p:column headerText="Type" sortBy="#{service.selectedServiceTypeModel.lable}" filterBy="#{service.selectedServiceTypeModel.lable}">
+                    <h:outputText value="#{service.selectedServiceTypeModel.lable}" />
+                </p:column>
+                
+                
+                <p:column headerText="System category" sortBy="#{service.selectedServiceCategoryModel.lable}" filterBy="#{service.selectedServiceCategoryModel.lable}">
+                    <h:outputText value="#{service.selectedServiceCategoryModel.lable}" />
+                </p:column>
+                
+                
+                <p:column headerText="Application queue" sortBy="#{service.selectedApplicationQueueModel.appName}" filterBy="#{service.selectedApplicationQueueModel.appName}">
+                    <h:outputText value="#{service.selectedApplicationQueueModel.appName}" />
+                </p:column>
+             
+                <p:column headerText="Creator" sortBy="#{service.creatorName}" filterBy="#{service.creatorName}">
+                    <h:outputText value="#{service.creatorName}" />
+                </p:column>      
+                
+                <p:column headerText="Status" sortBy="#{service.statusName}" filterBy="#{service.statusName}">
+                    <h:outputText value="#{service.statusName}" />
+                </p:column>  
+                
+                <p:column style="width:32px">
+                    <p:commandButton  icon="ui-icon-search" action="#{serviceListBean.goToViewPage(service)}" />
+                    <p:commandButton  icon="ui-icon-pencil" rendered="#{service.enableEdit}" action="#{serviceListBean.goToEditPage(service)}" />
+                    <p:commandButton  icon="ui-icon-trash"  rendered="#{service.enableDelete}" immediate="true" action="#{serviceListBean.deleteService(service)}" update="@form">
+                                   <p:confirm header="Confirmation"
+                                              message="Are you sure you want to delete #{service.serviceName} ?"
+                                               icon="ui-icon-alert" />
+                    </p:commandButton>
+
+                </p:column>
+            </p:dataTable>
+        </div>
+                </div>
+           
+            </div>
+             </h:form>
+    </ui:define>
+
+</ui:composition>

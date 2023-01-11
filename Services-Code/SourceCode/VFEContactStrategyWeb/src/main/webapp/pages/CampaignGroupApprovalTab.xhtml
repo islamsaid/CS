@@ -1,0 +1,41 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html">
+
+
+    <p:dataTable id="groupsTable" 
+                 rows="50" paginator="true"
+                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                 rowsPerPageTemplate="50,100,150" paginatorPosition="bottom"
+                 value="#{approvalBean.campGroupList}" var="group" 
+                 rowKey="#{group.groupId}">                    
+
+        <p:column headerText="Name" sortBy="#{group.groupName}"  
+                  filterMatchMode="contains" filterBy="#{group.groupName}">
+            <p:outputLabel value="#{group.groupName}"/></p:column>
+
+        <p:column headerText="Group Status" sortBy="#{group.statusName}" 
+                  filterMatchMode="contains" filterBy="#{group.statusName}">
+            <p:outputLabel value="#{group.statusName}"></p:outputLabel></p:column>
+
+        <p:column >
+            <p:commandButton  icon="ui-icon-pencil" action="#{adsGroupsBean.approveGroup(group)}"/>
+            <p:commandButton  icon="ui-icon-check" action="#{approvalBean.approveAdsGroup(group)}"  update="@form" id="appro_btn">
+                <p:confirm header="Confirmation"
+                           message="Are you sure you want to approve #{group.groupName} ?"
+                           icon="ui-icon-alert" />
+            </p:commandButton>
+            <p:tooltip for="appro_btn" value="Approve"/>
+            <p:commandButton  icon="ui-icon-close" action="#{approvalBean.rejectAdsGroup(group)}" update="@form" id="reject_btn">
+                <p:confirm header="Confirmation"
+                           message="Are you sure you want to reject #{group.groupName} ?"
+                           icon="ui-icon-alert" />
+            </p:commandButton>
+            <p:tooltip for="reject_btn" value="Reject"/>
+
+        </p:column>
+    </p:dataTable>
+
+
+</ui:composition>

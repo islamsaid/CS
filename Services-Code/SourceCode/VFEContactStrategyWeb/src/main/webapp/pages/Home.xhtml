@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/Template/menuTempplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html">
+
+    <ui:define name="title">
+        Home
+    </ui:define>
+    
+    <div class="innerHeader Mbottom20">
+    </div>
+
+    <ui:define name="content">
+
+        <div id="Messages" align="center">
+            <p:messages id="msgs" showDetail="false" autoUpdate="true"
+                        closable="true" />
+        </div>
+        <div align="center" style="height: 500px;">
+            <p:outputLabel value="#{homeBean.loggedInUser.username}"/>
+        </div>
+    </ui:define>
+
+</ui:composition>

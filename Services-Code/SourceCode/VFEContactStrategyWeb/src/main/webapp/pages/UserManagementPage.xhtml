@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/Template/menuTempplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html">
+
+    <ui:define name="title">
+        Manage User
+    </ui:define>
+
+    <ui:define name="content">
+
+        <p:messages id="errors" autoUpdate="true" severity="error info"/>
+
+        <div class="table_title_text">
+            <p:panelGrid columns="4">
+                <p:outputLabel value="User Create" rendered="#{userManagementBean.createMode}"/>
+                <p:outputLabel value="Edit #{userManagementBean.user.username}" rendered="#{userManagementBean.editMode}"/>
+                <p:outputLabel value="View #{userManagementBean.user.username}" rendered="#{userManagementBean.viewMode}"/>
+            </p:panelGrid>
+        </div>
+        <h:form id="form">
+            <div class="searchArea">
+
+                <f:event listener="#{userManagementBean.validateReq}" type="postValidate" />
+                <p:panelGrid columns="2">
+                    <p:panelGrid columns="1">
+                        <p:panelGrid columns="2">
+                            <p:outputLabel value="Username">
+                            <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:outputLabel>
+                        </p:panelGrid>
+                        <p:inputText id="usernameID" value="#{userManagementBean.user.username}" 
+                                     onkeydown="noArabicNoApostropheNoQuotationMark();" onkeypress="noArabicNoApostropheNoQuotationMark();" onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                     maxlength="50" readonly="#{userManagementBean.editMode or userManagementBean.viewMode}" 
+                                     />
+                    </p:panelGrid>
+                    <p:panelGrid columns="1">
+                        <p:panelGrid columns="2">
+                            <p:outputLabel value="Use Type">
+                            <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:outputLabel>
+                        </p:panelGrid>
+                        <p:selectOneMenu id="userTypeID" value="#{userManagementBean.userType}" 
+                                         disabled="#{userManagementBean.viewMode}" converter="lookupConverter">
+                            <f:selectItem  itemValue="0" itemLabel="--No Selection--"/>
+                            <f:selectItems value="#{userManagementBean.userTypes.entrySet()}" var="userType" itemLabel="#{userType.value.lable}" 
+                                           itemValue="#{userType.value}"></f:selectItems>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    </p:panelGrid>
+                    <div class="btns-table">
+                        <p:panelGrid columns="3" styleClass="equalHeight">
+                        <p:commandButton value="Save" action="#{userManagementBean.saveUser()}"
+                                         rendered="#{userManagementBean.editMode || userManagementBean.createMode}" ajax="false"/>
+                        <p:commandButton value="Cancel" action="UsersList.xhtml" immediate="true"/>
+                        </p:panelGrid>
+                    </div>
+                
+
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

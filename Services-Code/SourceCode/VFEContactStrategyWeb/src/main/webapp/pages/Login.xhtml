@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>LogIn</title>
+        
+        <link rel="apple-touch-icon" sizes="57x57" href="#{request.contextPath}/resources/images/favicons/apple-icon-57x57.png"></link>
+<link rel="assets/favicon/apple-touch-icon" sizes="60x60" href="#{request.contextPath}/resources/images/favicons/apple-icon-60x60.png"></link>
+<link rel="assets/favicon/apple-touch-icon" sizes="72x72" href="#{request.contextPath}/resources/images/favicons/apple-icon-72x72.png"></link>
+<link rel="assets/favicon/apple-touch-icon" sizes="76x76" href="#{request.contextPath}/resources/images/favicons/apple-icon-76x76.png"></link>
+<link rel="assets/favicon/apple-touch-icon" sizes="114x114" href="#{request.contextPath}/resources/images/favicons/apple-icon-114x114.png"></link>
+<link rel="assets/favicon/apple-touch-icon" sizes="120x120" href="#{request.contextPath}/resources/images/favicons/apple-icon-120x120.png"></link>
+<link rel="assets/favicon/apple-touch-icon" sizes="144x144" href="#{request.contextPath}/resources/images/favicons/apple-icon-144x144.png"></link>
+<link rel="assets/favicon/apple-touch-icon" sizes="152x152" href="#{request.contextPath}/resources/images/favicons/apple-icon-152x152.png"></link>
+<link rel="assets/favicon/apple-touch-icon" sizes="180x180" href="#{request.contextPath}/resources/images/favicons/apple-icon-180x180.png"></link>
+<link rel="icon" type="image/png" sizes="192x192"  href="#{request.contextPath}/resources/images/favicons/android-icon-192x192.png"></link>
+<link rel="icon" type="image/png" sizes="32x32" href="#{request.contextPath}/resources/images/favicons/favicon-32x32.png"></link>
+<link rel="icon" type="image/png" sizes="96x96" href="#{request.contextPath}/resources/images/favicons/favicon-96x96.png"></link>
+<link rel="icon" type="image/png" sizes="16x16" href="#{request.contextPath}/resources/images/favicons/favicon-16x16.png"></link>
+    
+<link rel="manifest" href="#{request.contextPath}/resources/images/favicons/manifest.json"></link>
+<meta name="msapplication-TileColor" content="#ffffff"></meta>
+<meta name="msapplication-TileImage" content="#{request.contextPath}/resources/images/favicons/ms-icon-144x144.png"></meta>
+<meta name="theme-color" content="#ffffff"></meta>
+        
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link href="#{request.contextPath}/resources/css/useful.css"
+		rel="stylesheet"></link>
+        <link href="#{request.contextPath}/resources/css/login.css"
+		rel="stylesheet"></link>
+    </h:head>
+
+    <h:body>
+        
+        <div class="loginContainer">
+    	<div class="loginSubContainer">
+        	<div class="loginBox">
+                    <p:messages id="errors" autoUpdate="true" severity="error info"/>
+            	<div class="W100">
+                	<div class="boxTitle">
+                    Login
+                    </div>
+                </div>
+            <h:form id="loggedInForm">
+            	<div class="W100">
+                	<div class="titleContainer">
+                    	<h:outputText value="Username"/>
+                	</div>
+                    <div class="fieldContainer">
+                    	<h:inputText id="username" value="#{loggedInUserBean.userName}" 
+                                     onkeydown="noArabicNoApostropheNoQuotationMark();" onkeypress="noArabicNoApostropheNoQuotationMark();" onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                     required="true" requiredMessage="Enter username."></h:inputText>
+                        <span class="errorMsg"><h:message for="username"></h:message></span>
+                	</div>
+                </div>
+                <div class="W100">
+                	<div class="titleContainer">
+                    	<h:outputText value="Password" />
+                	</div>
+                    <div class="fieldContainer">
+                    	<h:inputSecret id="password" value="#{loggedInUserBean.userPassword}" required="true" requiredMessage="Enter Password."></h:inputSecret>
+                        <span class="errorMsg"><h:message for="password"></h:message></span>
+                	</div>
+                </div>
+                <div class="W100 TAC">
+                	<h:commandButton action="#{loggedInUserBean.validateUsernamePassword}" value="Login"></h:commandButton>
+                </div>
+            </h:form>
+            </div>
+    	</div>
+    </div>
+    </h:body>
+</html>

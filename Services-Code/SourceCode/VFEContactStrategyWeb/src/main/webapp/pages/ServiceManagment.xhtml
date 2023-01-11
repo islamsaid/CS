@@ -1,0 +1,526 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="/Template/menuTempplate.xhtml">
+
+    <ui:define name="title">
+        Service Management
+    </ui:define>
+
+    <div class="innerHeader Mbottom20">
+    </div>
+
+    <ui:define name="content">
+        <div class="searchArea">
+            <h:form id="form">
+
+                <p:dialog modal="true" id="waitingMsgFun" position="center"
+                          closable="false" resizable="false" draggable=""
+                          widgetVar="waitingMsgFunDlg">
+                    <table class="loading_table">
+                        <tr>
+                            <td align="center"><h:graphicImage library="images"
+                                                               url="/resources/images/loading-x.gif"></h:graphicImage></td>
+                        </tr>
+                        <tr>
+                            <td>Please Wait .......</td>
+                        </tr>
+                    </table>
+                </p:dialog>
+                <p:ajaxStatus onstart="PF('waitingMsgFunDlg').show();"
+                              oncomplete="PF('waitingMsgFunDlg').hide();"
+                              onsuccess="PF('waitingMsgFunDlg').hide();">
+                </p:ajaxStatus>
+
+                <div class="table_title_text">
+                    <p:panelGrid columns="4">
+                        <p:outputLabel value="Create Service"
+                                       rendered="#{serviceManagmentBean.createMode}"></p:outputLabel>
+                        <p:outputLabel value="Edit #{serviceManagmentBean.serviceWebModel.serviceName}"
+                                       rendered="#{serviceManagmentBean.editMode}"></p:outputLabel>
+                        <p:outputLabel value="View #{serviceManagmentBean.serviceWebModel.serviceName}"
+                                       rendered="#{serviceManagmentBean.viewMode}"></p:outputLabel>
+                    </p:panelGrid>
+                </div>
+                <div align="center">
+                    <h4 id="aa">
+                        <p:messages id="msgs" showDetail="false" autoUpdate="true" closable="true" globalOnly="true"/>
+                    </h4>
+                    <p:panelGrid columns="2">
+                        <p:panelGrid columns="1">
+                            <p:panelGrid columns="2">
+                                <p:outputLabel value="System Name">
+                                    <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                                </p:outputLabel>
+                            </p:panelGrid>
+                            <p:inputText value="#{serviceManagmentBean.serviceWebModel.serviceName}" id="system_name" maxlength="50" disabled="#{!serviceManagmentBean.createMode}" 
+                                         onkeydown="noArabicNoApostropheNoQuotationMark();" onkeypress="noArabicNoApostropheNoQuotationMark();" onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                         validator="#{serviceManagmentBean.requiredFieldsValidator}">
+                                <f:attribute name="dailyQuotaAttr" value="#{dailyQuotaAttrBinding}"></f:attribute>
+                                <f:attribute name="interfaceAttr" value="#{interfaceBinding}"></f:attribute>
+                                <f:attribute name="typeAttr" value="#{typeBinding}"></f:attribute>
+                                <f:attribute name="maxConcatSMSAttr" value="#{maxConcatSMSBinding}"></f:attribute>
+                                <f:attribute name="maxBatchSizAttr" value="#{maxConcatSMSBinding}"></f:attribute>
+                                <f:attribute name="passwordAttr" value="#{passwordBinding}"/>
+                                <f:attribute name="confirmPasswordAttr" value="#{confirmPasswordBinding}"/>
+                            </p:inputText> 
+
+
+                        </p:panelGrid>
+                        
+                        <!-- CR 1901 | eslam.ahmed -->
+                        <p:panelGrid columns="1" styleClass="#{serviceManagmentBean.editMode?'equalHeight':''}" 
+                                     rendered="#{serviceManagmentBean.editMode or serviceManagmentBean.createMode}">
+                            <p:outputLabel value="Change Password" rendered="#{serviceManagmentBean.editMode}"></p:outputLabel>
+                            <p:selectBooleanCheckbox value="#{serviceManagmentBean.changePassword}" rendered="#{queueBean.editMode}" >
+                               <p:ajax event="change" update="passwordPanel confirmPasswordPanel" />
+                            </p:selectBooleanCheckbox>
+                        </p:panelGrid>
+                        
+                        <p:panelGrid columns="1" styleClass="#{serviceManagmentBean.editMode or serviceManagmentBean.createMode?'equalHeight':''}"
+                                     id="passwordPanel" rendered="#{serviceManagmentBean.editMode or serviceManagmentBean.createMode}">
+                            <p:panelGrid>
+                                <p:outputLabel value="System Password" rendered="#{serviceManagmentBean.editMode or serviceManagmentBean.createMode}"></p:outputLabel>
+                                <p:outputLabel value="*" style="color: red" rendered="#{serviceManagmentBean.editMode or serviceManagmentBean.createMode}"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:password id="password" value="#{serviceManagmentBean.serviceWebModel.password}" inline="true" 
+                                        disabled="#{(not serviceManagmentBean.changePassword) and queueBean.editMode}"
+                                        rendered="#{serviceManagmentBean.editMode or serviceManagmentBean.createMode}"
+                                        binding="#{passwordBinding}"/>
+                        </p:panelGrid> 
+                        <p:panelGrid columns="1" styleClass="#{serviceManagmentBean.editMode or serviceManagmentBean.createMode?'equalHeight':''}"
+                                     id="confirmPasswordPanel" rendered="#{serviceManagmentBean.editMode or serviceManagmentBean.createMode}">
+                            <p:panelGrid>
+                                <p:outputLabel value="Confirm System Password" rendered="#{serviceManagmentBean.editMode or serviceManagmentBean.createMode}"></p:outputLabel>
+                                <p:outputLabel value="*" style="color: red" rendered="#{serviceManagmentBean.editMode or serviceManagmentBean.createMode}"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:password id="confirmPassword" value="#{serviceManagmentBean.serviceWebModel.passwordConfirm}" inline="true" 
+                                        disabled="#{(not serviceManagmentBean.changePassword) and serviceManagmentBean.editMode}"
+                                        rendered="#{serviceManagmentBean.editMode or serviceManagmentBean.createMode}"
+                                        binding="#{confirmPasswordBinding}">
+                            </p:password>
+                        </p:panelGrid>
+                        <!-- END CR 1901 | eslam.ahmed -->
+                        
+                        <p:panelGrid columns="1">
+                            <p:panelGrid columns="2">
+                                <p:outputLabel value="Daily Quota">
+                                    <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                                </p:outputLabel>
+                            </p:panelGrid>
+                            <p:spinner value="#{serviceManagmentBean.serviceWebModel.dailyQuota}" min="1" maxlength="7" 
+                                       validatorMessage="must be more than zero" disabled="#{serviceManagmentBean.viewMode}" 
+                                       binding="#{dailyQuotaAttrBinding}">
+                                <p:ajax event="change" process="@this"/>
+                            </p:spinner>
+                        </p:panelGrid>
+
+                        <p:panelGrid columns="1">
+                            <p:panelGrid columns="2">
+                                <p:outputLabel value="Interface">
+                                    <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                                </p:outputLabel>
+                            </p:panelGrid>
+                            <p:selectOneMenu value="#{serviceManagmentBean.serviceWebModel.selectedInterfaceTypeID}" disabled="#{serviceManagmentBean.viewMode}" binding="#{interfaceBinding}">
+
+                                <f:selectItems value="#{serviceManagmentBean.interfaceTypeList}" var="interface"  itemLabel="#{interface.lable}" itemValue="#{interface.id}" ></f:selectItems>
+                                <p:ajax  process="@this" />
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+
+                        
+
+                    <p:panelGrid columns="1">
+                        <p:panelGrid columns="2">
+                            <p:outputLabel value="Type">
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:outputLabel>
+                        </p:panelGrid>
+                        <p:selectOneMenu value="#{serviceManagmentBean.serviceWebModel.selectedServiceTypeID}" disabled="#{serviceManagmentBean.viewMode}" binding="#{typeBinding}">
+                            <f:selectItems value="#{serviceManagmentBean.serviceTypeList}" var="type"  itemLabel="#{type.lable}" itemValue="#{type.id}" ></f:selectItems>
+                            <p:ajax process="@this" update="System_Category_panel"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                        
+                           <p:panelGrid columns="1">
+                                <p:outputLabel value="Procedure Batch Maximum Size">
+                                </p:outputLabel>
+                               <p:spinner value="#{serviceManagmentBean.serviceWebModel.procedureMaxBatchSize}" min="1" maxlength="7" 
+                                       validatorMessage="must be more than zero" disabled="#{serviceManagmentBean.viewMode}" 
+                                       >
+                                <p:ajax event="change" process="@this"/>
+                            </p:spinner>
+                        </p:panelGrid>
+
+                    <p:panelGrid columns="1" id="SP_Queue_Name">
+                        <p:outputLabel value="SMS Procedure Queue Name"/>
+                        <p:selectOneMenu value="#{serviceManagmentBean.serviceWebModel.smsProcedureQueueId}"  >
+                            <f:selectItem itemLabel="--  Choose  --" itemValue="-1"></f:selectItem>
+                            <f:selectItems value="#{serviceManagmentBean.approvedQueueListProcedure}" var="approvedQueueListProcedure"  itemLabel="#{approvedQueueListProcedure.appName}" itemValue="#{approvedQueueListProcedure.versionId}" ></f:selectItems>
+                            <f:ajax event="change"   />
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+
+                    <p:panelGrid columns="1" id="System_Category_panel">
+
+                        <p:outputLabel value="System Category"></p:outputLabel>
+                        <p:selectOneMenu rendered="#{serviceManagmentBean.serviceWebModel.selectedServiceTypeID == serviceManagmentBean.SERVICE_MONITOR_TYPE ? false : true }" value="#{serviceManagmentBean.serviceWebModel.selectedServiceCategoryID}" disabled="#{serviceManagmentBean.viewMode}" >
+                            <f:selectItems value="#{serviceManagmentBean.serviceCategoryList}" var="type"  itemLabel="#{type.lable}" itemValue="#{type.id}" ></f:selectItems>
+                            <p:ajax process="@this" />   
+                        </p:selectOneMenu>
+                        <p:inputText readonly="true" 
+                                     rendered="#{serviceManagmentBean.serviceWebModel.selectedServiceTypeID == serviceManagmentBean.SERVICE_MONITOR_TYPE ? true : false }" value="#{serviceManagmentBean.serviceWebModel.selectedServiceCategoryModel.lable}"
+                                     onkeydown="noArabicNoApostropheNoQuotationMark();" onkeypress="noArabicNoApostropheNoQuotationMark();" onkeyup="noArabicNoApostropheNoQuotationMark();"/>
+                    </p:panelGrid>
+
+                    <p:panelGrid columns="1" id="Service_Privilege">
+                        <p:panelGrid columns="2">
+                            <p:outputLabel value="Service Privilege">
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:outputLabel>
+                        </p:panelGrid>
+                        <p:selectOneMenu value="#{serviceManagmentBean.serviceWebModel.servicePrivilege}"  >
+                            <f:selectItems value="#{serviceManagmentBean.servicePrivileges}" var="servicePrivilege"  itemLabel="#{servicePrivilege.lable}" itemValue="#{servicePrivilege.id}" ></f:selectItems>
+                            <p:ajax event="change" process="@this" update="Originator Originator_Type"  />
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+
+
+                    <p:panelGrid columns="1" id="Originator">
+                        <p:panelGrid columns="2">
+                            <p:outputLabel value="Originator">
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:outputLabel>
+                        </p:panelGrid>
+                        <p:selectOneMenu value="#{serviceManagmentBean.serviceWebModel.originatorValue}" disabled="#{serviceManagmentBean.serviceWebModel.servicePrivilege == 2 ? false : true}">
+                            <f:selectItems value="#{serviceManagmentBean.originatorValues.entrySet()}" var="originator"  itemLabel="#{originator.value.lable}" itemValue="#{originator.value.id}" ></f:selectItems>
+                            <f:validateLength maximum="#{serviceManagmentBean.originatorMaxLength}"/>
+                            <p:ajax event="change"  process="@this" listener="#{serviceManagmentBean.validateOriginatorValue()}" />
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+
+
+                    <p:panelGrid columns="1" id="Originator_Type">
+                        <p:panelGrid columns="2">
+                            <p:outputLabel value="Originator Type">
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:outputLabel>
+                        </p:panelGrid>
+                        <p:selectOneMenu value="#{serviceManagmentBean.serviceWebModel.originatorType}"  disabled="#{serviceManagmentBean.serviceWebModel.servicePrivilege == 2 ? false : true}">
+                            <f:selectItems value="#{serviceManagmentBean.originatorTypes}" var="originatorTypes"  itemLabel="#{originatorTypes.originatorName}" itemValue="#{originatorTypes.originatorType}" ></f:selectItems>
+                            <p:ajax event="change"  process="@this" listener="#{serviceManagmentBean.validateOriginatorType()}" />
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+
+                    <p:panelGrid columns="1">
+                        <br></br>
+                        <p:panelGrid columns="2"  >
+                            <h:outputText value="Delivery Report" />
+                            <p:selectBooleanCheckbox value="#{serviceManagmentBean.serviceWebModel.deliveryReport}" disabled="#{serviceManagmentBean.viewMode}" >
+                                <p:ajax process="@this" />
+                            </p:selectBooleanCheckbox>
+                        </p:panelGrid>
+                    </p:panelGrid>
+
+                    <p:panelGrid columns="1">
+                        <br></br>
+                        <p:panelGrid columns="2" >
+                            <h:outputText value="Consult Counter Check" />
+                            <p:selectBooleanCheckbox value="#{serviceManagmentBean.serviceWebModel.consultCounter}" disabled="#{serviceManagmentBean.viewMode}" >
+                                <p:ajax process="@this" />
+                            </p:selectBooleanCheckbox>
+                        </p:panelGrid>
+                    </p:panelGrid>
+
+                    <p:panelGrid columns="1">
+                        <br></br>
+                        <p:panelGrid columns="2"  >
+                            <h:outputText value="Ads Consult Counter Check" />
+                            <p:selectBooleanCheckbox value="#{serviceManagmentBean.serviceWebModel.adsConsultCounter}" disabled="#{serviceManagmentBean.viewMode}" >
+                                <p:ajax process="@this" />
+                            </p:selectBooleanCheckbox>
+                        </p:panelGrid>
+                    </p:panelGrid>
+                    <p:panelGrid columns="1">
+                        <p:panelGrid columns="2">
+                            <p:outputLabel value="max concatenated SMS">
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:outputLabel>
+                        </p:panelGrid>
+                        <p:spinner value="#{serviceManagmentBean.serviceWebModel.allowedSMS}" min="1" max="9" maxlength="2"
+                                   binding="#{maxConcatSMSBinding}"
+                                   disabled="#{serviceManagmentBean.viewMode}" validatorMessage=" range from 1 to 9">
+                            <p:ajax event="change" process="@this"/>
+                        </p:spinner>
+                    </p:panelGrid>
+
+                    <p:panelGrid columns="1">
+                        <br></br>
+                        <p:panelGrid columns="2" >
+                            <h:outputText value="Support Ads" />
+                            <p:selectBooleanCheckbox value="#{serviceManagmentBean.serviceWebModel.supportAds}" disabled="#{serviceManagmentBean.viewMode}" >
+                                <p:ajax process="@this" />
+                            </p:selectBooleanCheckbox>
+                        </p:panelGrid>
+                    </p:panelGrid>
+
+                    <p:panelGrid columns="1">
+                        <br></br>
+                        <p:panelGrid columns="2"  >
+                            <h:outputText value="White list" />
+                            <p:selectBooleanCheckbox value="#{serviceManagmentBean.serviceWebModel.hasWhiteList}" disabled="#{serviceManagmentBean.viewMode}" >
+                                <p:ajax process="@this" update="form:whiteListID" />
+                            </p:selectBooleanCheckbox>
+                        </p:panelGrid>
+                    </p:panelGrid>
+                    <br></br>
+
+                    <p:panelGrid id="whiteListID" columns="1"  style="border-style: solid; border-width:2px ; border: #000000" styleClass="mContainer">
+                        <p:panelGrid columns="1">
+                            <h:outputText value="White list" />
+                            <p:panelGrid columns="2">
+                                <p:inputText id="serviceIP" value="#{serviceManagmentBean.serviceIP}" 
+                                             onkeydown="noArabicNoApostropheNoQuotationMark();" onkeypress="noArabicNoApostropheNoQuotationMark();" onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                             disabled="#{serviceManagmentBean.viewMode || !serviceManagmentBean.serviceWebModel.hasWhiteList}" >
+                                </p:inputText>
+                                <p:commandButton value="Add"  process="@this form:serviceIP" update="form:whiteListID" actionListener="#{serviceManagmentBean.addToWhiteList()}" 
+                                                 disabled="#{serviceManagmentBean.viewMode || !serviceManagmentBean.serviceWebModel.hasWhiteList}" />
+                            </p:panelGrid>  
+                        </p:panelGrid>
+                        <p:dataTable var="ip" value="#{serviceManagmentBean.serviceWebModel.whiteListIPs}" >
+                            <p:column >
+                                <h:outputText value="#{ip}"/>
+                                <p:commandButton  icon="ui-icon-close" ajax="true" process="@this" update="@form" actionListener="#{serviceManagmentBean.removeFromWhiteList(ip)}" 
+                                                  disabled="#{serviceManagmentBean.viewMode || !serviceManagmentBean.serviceWebModel.hasWhiteList}" />
+                            </p:column>
+
+                        </p:dataTable>
+
+                    </p:panelGrid>
+
+                    <p:panelGrid columns="1" id="selectedQueuePanel">
+                        <p:panelGrid columns="2" id="autoCreatePanel">
+                            <h:outputText value="Auto Create Queue Flag" />
+                            <p:selectBooleanCheckbox id="auto_create_flag" widgetVar="auto_create_flag" value="#{serviceManagmentBean.serviceWebModel.autoCreatdFlag}" disabled="#{serviceManagmentBean.viewMode || serviceManagmentBean.editMode}" >
+                                <p:ajax event="change" listener="#{serviceManagmentBean.displayDialog}" update="form:selectedQueuePanel"/>
+                            </p:selectBooleanCheckbox>
+                            <!--<p:commandButton id="basic" value="Show Dialog" onclick="PF('dlg1').show();" />  -->
+
+
+                        </p:panelGrid> 
+                        <p:panelGrid >
+                            <p:outputLabel value="Selected Queue: "></p:outputLabel>
+                            <p:commandLink id="ajax" update="form:selectedQueuePanel" actionListener="#{serviceManagmentBean.displayDialog}" 
+                                           disabled="#{serviceManagmentBean.viewMode || !serviceManagmentBean.serviceWebModel.autoCreatdFlag || serviceManagmentBean.queueModel.status!=2}" >
+                                <h:outputText value="#{serviceManagmentBean.queueModel.appName}" />
+                            </p:commandLink>
+                        </p:panelGrid>
+                        <p:panelGrid columns="2">
+                            <p:outputLabel value="Application">
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:outputLabel>
+                        </p:panelGrid>
+                        <p:selectOneMenu value="#{serviceManagmentBean.serviceWebModel.selectedApplicationQueueID}" disabled="#{serviceManagmentBean.serviceWebModel.autoCreatdFlag || serviceManagmentBean.viewMode}" >
+                            <f:selectItem itemLabel="--  Choose  --" itemValue="-1"></f:selectItem>
+                            <f:selectItems value="#{serviceManagmentBean.approvedQueueListSender}" var="queue"  itemLabel="#{queue.appName}" itemValue="#{queue.versionId}" ></f:selectItems>
+                            <f:ajax event="change" listener="#{serviceManagmentBean.handleQueueModel()}"  />
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+
+                </p:panelGrid>
+
+                <p:dialog id="dialog" header="Auto Create Dialog" widgetVar="dlg1" modal="true" positionType="center" height="500" 
+                          width="900" closable="false">
+                    <!--    <h:outputText value="This content is loaded lazy." />  -->
+                    <!--    <ui:include src="ServiceList.xhtml"/>-->
+
+                    <p:messages id="errors" autoUpdate="true" severity="error info"/>
+
+                    <p:panelGrid columns="2">
+                        <p:panelGrid columns="1">
+                            <p:outputLabel value="Application Queue Name">
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:outputLabel>
+                            <p:inputText value="#{serviceManagmentBean.queueModel.appName}"  maxlength="20"
+                                         onkeydown="noArabicNoSpaceNoSpecialChars();"
+                                         onkeyup="noArabicNoSpaceNoSpecialChars();"
+                                         onkeypress="noArabicNoSpaceNoSpecialChars();"
+                                         id="app_queue_name" validator="#{serviceManagmentBean.requiredFieldsValidator}">
+                                <f:attribute name="dequeuePoolSizeAttr" value="#{dequeuePoolSizeBinding}"></f:attribute>
+                                <f:attribute name="senderPoolSizeAttr" value="#{senderPoolSizeBinding}"></f:attribute>
+                                <f:attribute name="smscAttr" value="#{smscBinding}"></f:attribute>
+                                <f:attribute name="databaseURLAttr" value="#{databaseURLBinding}"></f:attribute>
+                                <f:attribute name="tableSpaceNameAttr" value="#{tableSpaceNameBinding}"></f:attribute>
+                                <f:attribute name="timeWindowFlagAttr" value="#{timeWindowFlag}"/>
+                                <f:attribute name="timeWindowFromHrAttr" value="#{timeWindowFromHr}"/>
+                                <f:attribute name="timeWindowFromMinAttr" value="#{timeWindowFromMin}"/>
+                                <f:attribute name="timeWindowToHrAttr" value="#{timeWindowToHr}"/>
+                                <f:attribute name="timeWindowToMinAttr" value="#{timeWindowToMin}"/>
+                                <f:attribute name="schemaNameAttr" value="#{schemaName}"/>
+                                <f:attribute name="schemaPasswordAttr" value="#{schemaPassword}"/>
+                            </p:inputText>
+                        </p:panelGrid>
+
+                        <p:panelGrid columns="1">
+                            <p:outputLabel value="Table Space Name">
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:outputLabel>
+                            <p:inputText value="#{serviceManagmentBean.queueModel.tableSpaceName}" maxlength="50"
+                                         onkeydown="noArabicNoApostropheNoQuotationMark();" onkeypress="noArabicNoApostropheNoQuotationMark();" onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                         binding="#{tableSpaceNameBinding}" >          
+                            </p:inputText>
+                        </p:panelGrid>
+
+                        <p:panelGrid columns="1">
+                            <p:outputLabel value="Dequeque Pool Size">
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:outputLabel>
+                            <p:spinner value="#{serviceManagmentBean.queueModel.dequeuePoolSize}" min="1" max="9" maxlength="2"
+                                       binding="#{dequeuePoolSizeBinding}" >      
+                                <p:ajax event="change" process="@this"/>
+                            </p:spinner>
+                        </p:panelGrid>
+                        <p:panelGrid columns="1">
+                            <p:outputLabel value="Threshold">
+                                <p:outputLabel value="" style="visibility: hidden"></p:outputLabel>
+                            </p:outputLabel>
+                            <p:spinner value="#{serviceManagmentBean.queueModel.threshold}"  min="1" max="10000" maxlength="5">
+                                <p:ajax event="change" process="@this"/>
+                            </p:spinner>
+                        </p:panelGrid>
+
+                        <p:panelGrid columns="1">
+                            <p:panelGrid columns="2">
+                                <p:outputLabel value="Sender Pool Size">
+                                    <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                                </p:outputLabel>
+                            </p:panelGrid>
+                            <p:spinner value="#{serviceManagmentBean.queueModel.senderPoolSize}" min="1" max="9" maxlength="1" 
+                                       binding="#{senderPoolSizeBinding}" >
+                                <p:ajax event="change" process="@this"/>
+                            </p:spinner>
+                        </p:panelGrid>
+
+                        <p:panelGrid columns="1">
+                            <p:outputLabel value="" style="color: red"></p:outputLabel>
+                            <p:outputLabel value="Time Window Flag"></p:outputLabel>
+                            <p:selectBooleanCheckbox value="#{serviceManagmentBean.queueModel.timeWindowFlag}" 
+                                                     binding="#{timeWindowFlag}"   >
+                                <p:ajax   update="time_window_from_panel form:time_window_to_panel" process="@this"/>
+                            </p:selectBooleanCheckbox>
+                        </p:panelGrid>
+
+                        <p:panelGrid columns="1" id="time_window_from_panel">
+                            <p:outputLabel value="Time Window From"></p:outputLabel>
+                            <p:panelGrid columns="2">
+                                <p:spinner id="time_window_from_hr" value="#{serviceManagmentBean.queueModel.timeWindowFromHour}" maxlength="2"
+                                           min="0" max="23" 
+                                           binding="#{timeWindowFromHr}"
+                                           disabled="#{!serviceManagmentBean.queueModel.timeWindowFlag}">
+                                    <p:ajax event="change" process="@this"/>
+                                </p:spinner>
+                                <p:spinner id="time_window_from_min" value="#{serviceManagmentBean.queueModel.timeWindowFromMin}" min="0" max="59" maxlength="2"
+                                           binding="#{timeWindowFromMin}"
+                                           disabled="#{!serviceManagmentBean.queueModel.timeWindowFlag }">
+                                    <p:ajax event="change" process="@this"/>
+                                </p:spinner>
+                            </p:panelGrid>
+                        </p:panelGrid>
+                        <p:panelGrid columns="1" id="time_window_to_panel">
+                            <p:outputLabel value="Time Window To"/>
+                            <p:panelGrid columns="2">
+                                <p:spinner id="time_window_to_hr" value="#{serviceManagmentBean.queueModel.timeWindowToHour}" min="0" max="23" maxlength="2"
+                                           binding="#{timeWindowToHr}"
+                                           disabled="#{!serviceManagmentBean.queueModel.timeWindowFlag }">
+                                    <p:ajax event="change" process="@this"/>
+                                </p:spinner>
+                                <p:spinner id="time_window_to_min" value="#{serviceManagmentBean.queueModel.timeWindowToMin}" min="0" max="59" maxlength="2"
+                                           binding="#{timeWindowToMin}"
+                                           disabled="#{!serviceManagmentBean.queueModel.timeWindowFlag}">
+                                    <p:ajax event="change" process="@this"/>
+                                </p:spinner>
+                            </p:panelGrid>
+                        </p:panelGrid>
+                        <p:panelGrid columns="1">
+                            <p:panelGrid>
+                                <p:outputLabel value="Database URL"></p:outputLabel>
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:inputText value="#{serviceManagmentBean.queueModel.databaseUrl}" 
+                                         binding="#{databaseURLBinding}" disabled="#{serviceManagmentBean.viewMode}"  maxlength="200"></p:inputText>
+                        </p:panelGrid>
+                        <p:panelGrid columns="1">
+                            <p:panelGrid>
+                                <p:outputLabel value="Schema Name"></p:outputLabel>
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:inputText value="#{serviceManagmentBean.queueModel.schemaName}"
+                                         onkeydown="noArabicNoApostropheNoQuotationMark();" onkeypress="noArabicNoApostropheNoQuotationMark();" onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                         binding="#{schemaName}"  maxlength="50"></p:inputText>
+                        </p:panelGrid>
+                        <p:panelGrid columns="1">
+                            <p:panelGrid>
+                                <p:outputLabel value="Schema Password"></p:outputLabel>
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:inputText value="#{serviceManagmentBean.queueModel.schemaPassword}" 
+                                         onkeydown="noArabicNoApostropheNoQuotationMark();" onkeypress="noArabicNoApostropheNoQuotationMark();" onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                         binding="#{schemaPassword}" maxlength="50"></p:inputText>
+                        </p:panelGrid>
+                    </p:panelGrid>
+                    <p:panelGrid columns="1">
+                        <p:panelGrid columns="2">
+                            <p:outputLabel value="SMSC">
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:outputLabel>
+                        </p:panelGrid>
+
+                        <p:pickList id="smsc" value="#{serviceManagmentBean.smscDualList}" var="SMSC" 
+                                    itemValue="#{SMSC}" itemLabel="#{SMSC.SMSCname}" 
+                                    showSourceControls="true" showTargetControls="true"
+                                    showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains"
+                                    converter="genericConverter" responsive="true" disabled="#{serviceManagmentBean.viewMode}" 
+                                    binding="#{smscBinding}"
+                                    >
+                            <p:ajax event="transfer" process="@this"/>
+                            <p:column><p:outputLabel value="#{SMSC.SMSCname}"></p:outputLabel></p:column>
+                        </p:pickList>
+
+                    </p:panelGrid>
+                    <div class="btns-table">
+                        <p:panelGrid columns="3">
+                            <p:commandButton value="Save" ajax="true" actionListener="#{serviceManagmentBean.createQueue()}"/>
+                            <p:commandButton value="Cancel" ajax="true" actionListener="#{serviceManagmentBean.cancelCreateQueue()}" 
+                                             oncomplete="PF('auto_create_flag').uncheck();"
+                                             immediate="true"/>
+                        </p:panelGrid>
+                    </div>
+
+
+                </p:dialog> 
+                <!--                    <div class="btns-table">
+                                        <p:panelGrid columns="3">
+                                            <p:commandButton value="Submit" ajax="false" action="#{serviceManagmentBean.createService()}"/>
+                
+                                        </p:panelGrid>
+                                    </div>-->
+
+                <div class="btns-table">
+                    <p:panelGrid columns="3" styleClass="equalHeight">
+                        <p:commandButton value="Save" action="#{serviceManagmentBean.createService()}" 
+                                         rendered="#{serviceManagmentBean.createMode}" />
+                        <p:commandButton value="Save" action="#{serviceManagmentBean.editService()}" rendered="#{serviceManagmentBean.editMode}"/>
+                        <p:commandButton value="Approve" rendered="#{serviceManagmentBean.approvalMode}" action="#{serviceManagmentBean.approveService()}"/>
+                        <p:commandButton value="Reject" rendered="#{serviceManagmentBean.approvalMode}" action="#{serviceManagmentBean.rejectService()}"/>
+                        <p:commandButton value="Cancel" rendered="#{serviceManagmentBean.approvalMode}" action="OperationsApproval" immediate="true"/>
+                        <p:commandButton value="Cancel" action="ServiceList" immediate="true" rendered="#{!serviceManagmentBean.approvalMode}"></p:commandButton>
+                    </p:panelGrid>
+                </div>
+
+            </div>
+        </h:form>
+    </div>
+</ui:define>
+</ui:composition>

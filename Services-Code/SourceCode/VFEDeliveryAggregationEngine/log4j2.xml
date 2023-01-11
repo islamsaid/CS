@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn">
+    <Properties>
+        <Property name="basePath">/var/log/app</Property>
+    </Properties>
+
+    <Appenders>		
+        <RollingFile name="fileAppender" fileName="${basePath}/app.log" filePattern="${basePath}/app-%i.log">
+            <AdvancedJSONLayout newLine="true" exposeMessageOnRoot="true" exposeContextMapOnRoot="true" exposeLocationOnRoot="true" locationInfo="true">
+                <KeyValuePair key="service" value="delivery-aggregation-service" />
+            </AdvancedJSONLayout>
+            <Policies>
+				<SizeBasedTriggeringPolicy size="800 MB" />
+            </Policies>
+			<DefaultRolloverStrategy fileIndex="min" max="1"/>
+        </RollingFile>
+       
+        <Console name="console" target="SYSTEM_OUT">
+            <AdvancedJSONLayout newLine="true" exposeMessageOnRoot="true" exposeContextMapOnRoot="true" exposeLocationOnRoot="true" locationInfo="true">
+                <KeyValuePair key="service" value="delivery-aggregation-service" />
+            </AdvancedJSONLayout>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="businessLogger" level="info" additivity="false">
+            <AppenderRef  ref="fileAppender" level="info" />
+            <AppenderRef  ref="console" level="info" />
+        </Logger>
+        <Logger name="errorLogger" level="info" additivity="false">
+            <AppenderRef  ref="fileAppender" level="info" />
+            <AppenderRef  ref="console" level="info" />
+        </Logger>
+        <Logger name="livenessLogger" level="info" additivity="false">
+            <AppenderRef  ref="fileAppender" level="info" />
+            <AppenderRef  ref="console" level="info" />
+        </Logger>
+        <Root level="error" additivity="false">
+            <AppenderRef  ref="console" level="error" />
+        </Root>
+    </Loggers>
+</Configuration>

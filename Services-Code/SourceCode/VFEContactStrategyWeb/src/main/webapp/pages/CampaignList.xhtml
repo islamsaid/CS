@@ -1,0 +1,113 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="/Template/menuTempplate.xhtml">
+    <ui:define name="title">
+        Campaign List
+    </ui:define>
+    <ui:define name="content">
+
+        <h:form id="form">
+            
+            <p:dialog modal="true" id="waitingMsgFun" position="center"
+                          closable="false" resizable="false" draggable=""
+                          widgetVar="waitingMsgFunDlg">
+                    <table class="loading_table">
+                        <tr>
+                            <td align="center"><h:graphicImage library="images"
+                                                               url="/resources/images/loading-x.gif"></h:graphicImage></td>
+                        </tr>
+                        <tr>
+                            <td>Please Wait .......</td>
+                        </tr>
+                    </table>
+                </p:dialog>
+                <p:ajaxStatus onstart="PF('waitingMsgFunDlg').show();"
+                              oncomplete="PF('waitingMsgFunDlg').hide();"
+                              onsuccess="PF('waitingMsgFunDlg').hide();">
+                </p:ajaxStatus>
+            
+            <div id="Messages" align="center">
+                <p:messages id="msgs" showDetail="false" autoUpdate="true"
+                            closable="true" />
+            </div>
+            <div class="table_title_text">
+                <p:panelGrid columns="4">
+                    <p:outputLabel value="Campaign List"></p:outputLabel>
+                    <p:commandButton value="Create Campaign" action="#{campaignBean.goToCreatePage()}"></p:commandButton>
+                </p:panelGrid>
+            </div>
+
+
+            <div class="searchArea">
+
+                <div align="center">
+                    <div class="table-responsive serachTabel">
+                       
+                        <p:dataTable var="campaign" value="#{campaignBean.campaignList}" paginator="true" rows="10" paginatorPosition="bottom"
+                                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                     rowsPerPageTemplate="5,10,15"   id="campaignTable" widgetVar="campaignTable">
+
+                            <p:column headerText="Campaign Name" sortBy="#{campaign.campaignName}" filterBy="#{campaign.campaignName}" filterMatchMode="contains">
+                                <h:outputText value="#{campaign.campaignName}" />
+                            </p:column>
+                            <p:column headerText="Start Date" sortBy="#{campaign.startDate}" filterBy="#{campaign.startDate}">
+                                <h:outputText value="#{campaign.startDate}" />
+                            </p:column>
+                            <p:column headerText="End Date" sortBy="#{campaign.endDate}" filterBy="#{campaign.endDate}">
+                                <h:outputText value="#{campaign.endDate}" />
+                            </p:column>
+                            <p:column headerText="Maximum Communications " sortBy="#{campaign.maxNumberOfCommunications}" filterBy="#{campaign.maxNumberOfCommunications}">
+                                <h:outputText value="#{campaign.maxNumberOfCommunications}" />
+                            </p:column>
+                            <p:column headerText="Priority " sortBy="#{campaign.priority}" filterBy="#{campaign.priority}">
+                                <h:outputText value="#{campaign.priority}" />
+                            </p:column>
+                            <p:column headerText="Arabic Script" sortBy="#{campaign.arabicScript}" filterBy="#{campaign.arabicScript}">
+                                <h:outputText 
+                                    style="word-break: break-all; word-wrap:break-word !important;"
+                                    value="#{campaign.arabicScript}" />
+                            </p:column>
+                            <p:column headerText="English Script" sortBy="#{campaign.englishScript}" filterBy="#{campaign.englishScript}">
+                                <h:outputText 
+                                    style="word-break: break-all;word-wrap: break-word;"
+                                    value="#{campaign.englishScript}" />
+                            </p:column>
+                            <p:column headerText="Last Modified " sortBy="#{campaign.lastModifiedByName}" filterBy="#{campaign.lastModifiedByName}">
+                                <h:outputText value="#{campaign.lastModifiedByName}" />
+                            </p:column>
+                            
+                            <p:column headerText="Status" sortBy="#{campaign.statusName}" filterBy="#{campaign.statusName}" filterMatchMode="exact">
+                                <f:facet name="filter">
+                                    <p:selectOneMenu onchange="PF('campaignTable').filter()">
+                                        <f:selectItem itemLabel="Select One" itemValue="#{null}" noSelectionOption="true"/>  
+                                        <f:selectItems value="#{campaignBean.operationStatus}" var="status" 
+                                                       itemLabel="#{status.lable}" itemValue="#{status.lable}"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <h:outputText value="#{campaign.statusName}" />
+                            </p:column>
+                              <p:column>
+                                  <p:commandButton icon="ui-icon-play" action="#{campaignBean.resumeCampaign(campaign)}" rendered="#{campaign.enableStart}" style="visibility: #{campaignBean.retrieveStartVisibility(campaign)}" immediate="true" update="@form" oncomplete="PF('campaignTable').filter()"></p:commandButton>
+                                  <p:commandButton icon="ui-icon-pause"  action="#{campaignBean.pauseCampaign(campaign)}" rendered="#{campaign.enablePause}" style="visibility: #{campaignBean.retrievePauseVisibility(campaign)}" immediate="true" update="@form" oncomplete="PF('campaignTable').filter()"></p:commandButton>
+                                  <br></br>
+                                  <p:commandButton icon="ui-icon-stop"  action="#{campaignBean.stopCampaign(campaign)}" rendered="#{campaign.enableStop}" style="visibility: #{campaignBean.retrieveStopVisibility(campaign)}" immediate="true" update="@form" oncomplete="PF('campaignTable').filter()"></p:commandButton>
+                            </p:column>
+                            <p:column>
+                                <p:commandButton icon="ui-icon-search" action="#{campaignBean.goToViewPage(campaign)}"></p:commandButton>
+                                <p:commandButton icon="ui-icon-pencil" rendered="#{campaign.enableEdit}" action="#{campaignBean.goToEditPage(campaign)}"></p:commandButton>
+                                <p:commandButton icon="ui-icon-trash" rendered="#{campaign.enableDelete}"  immediate="true" action="#{campaignBean.deleteCampaign(campaign)}" update="@form" >
+                                    <p:confirm header="Confirm"
+                                               message="Are you sure that you want to delete this campaign ?" icon="ui-icon-alert" /></p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                        
+                    </div>
+                </div>
+
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

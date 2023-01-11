@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="/Template/menuTempplate.xhtml">
+
+    <ui:define name="title">
+        Total number of sent SMS per customer 
+    </ui:define>
+
+
+
+    <ui:define name="content">
+        <h:form id="form">
+
+            <p:dialog modal="true" id="waitingMsgFun" position="center"
+                      closable="false" resizable="false" draggable=""
+                      widgetVar="waitingMsgFunDlg">
+                <table class="loading_table">
+                    <tr>
+                        <td align="center"><h:graphicImage library="images"
+                                                           url="/resources/images/loading-x.gif"></h:graphicImage></td>
+                    </tr>
+                    <tr>
+                        <td>Please Wait .......</td>
+                    </tr>
+                </table>
+            </p:dialog>
+            <p:ajaxStatus onstart="PF('waitingMsgFunDlg').show();"
+                          oncomplete="PF('waitingMsgFunDlg').hide();">
+            </p:ajaxStatus>
+
+            <p:messages id="errors" autoUpdate="true" severity="error info"/>
+            <div class="searchArea">
+                <div id="hazem" class="searchArea" align="left">
+                    <div class="table_title_text">
+                        <p:outputLabel value="Number Of Recieved SMS Report"></p:outputLabel>
+                    </div>
+                    <p:panelGrid id="grid" columns="2"> 
+                        <p:panelGrid id="grid1" columns="1" >
+                            <p:panelGrid>
+                                <p:outputLabel for="FromDateTime" value="From" />
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:calendar id="FromDateTime" value="#{noRecievedSMSPerWM.reportsModel.fromDate}" 
+                                        pattern="dd/MM/yyyy hh:mm:ss a" binding="#{fromDate}">
+                            </p:calendar>
+
+                        </p:panelGrid>
+                        <p:panelGrid id="grid2" columns="1" >
+                            <p:panelGrid>
+                                <p:outputLabel for="ToDateTime" value="To" />
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:calendar id="ToDateTime" value="#{noRecievedSMSPerWM.reportsModel.toDate}" 
+                                        pattern="dd/MM/yyyy hh:mm:ss a" binding="#{toDate}">
+                            </p:calendar>
+
+                        </p:panelGrid>
+                        <p:panelGrid id="grid3" columns="1" >
+                            <p:panelGrid>
+                                <p:outputLabel value="MSISDN" />
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <h:inputText id="MSISDN_ID" value="#{noRecievedSMSPerWM.reportsModel.msisdn}" 
+                                         onkeydown="noArabicNoApostropheNoQuotationMark();" onkeypress="noArabicNoApostropheNoQuotationMark();" onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                         validator="#{noRecievedSMSPerWM.requiredFieldsValidator}" 
+                                         maxlength="30">
+                                <f:attribute name="fromDateAttr" value="#{fromDate}"/>
+                                <f:attribute name="toDateAttr" value="#{toDate}"/>
+                            </h:inputText>
+
+                        </p:panelGrid>
+                        <p:panelGrid id="grid4" columns="1" ></p:panelGrid>
+                        <p:panelGrid id="grid5" columns="1" ></p:panelGrid>
+                        <p:panelGrid id="grid6" >
+                            <div class="W100 TAR">
+                                <p:commandButton value="Generate" onclick="PF('waitingMsgFunDlg').show();"
+                                                 style="float:none !important;"
+                                                 action="#{noRecievedSMSPerWM.retrieveCountOfReciecvedSMS}" ajax="true" update="tbl"/>
+                                <p:commandButton value="Cancel" 
+                                                 style="float:none !important;"
+                                                 action="reportListPage.xhtml" immediate="true"/>
+                            </div>
+                        </p:panelGrid>
+                    </p:panelGrid>
+
+                </div>
+            </div>
+            <p:dataTable id="tbl" var="model" value="#{noRecievedSMSPerWM.reports}"
+                         rows="1" style="margin-bottom:20px" emptyMessage="No Records">
+                <p:column headerText="MSISDN">
+                    <h:outputText value="#{model.msisdn}" />
+                </p:column>
+                <p:column headerText="Count">
+                    <h:outputText value="#{model.count}" />
+                </p:column>
+            </p:dataTable>
+            <div class="W100 TAC">
+                <p:commandButton value="Download" ajax="false"  immediate="true" style="float:none !important;">
+                    <p:dataExporter type="xls" target="form:tbl" fileName="count" />
+                </p:commandButton>
+
+            </div>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

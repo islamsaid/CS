@@ -1,0 +1,92 @@
+.innerContainer{
+	width:100%;
+	display:inline-table;
+}
+
+.innerHeader {
+    width:100%;
+    height:271px;
+    background-color: transparent;
+    background-image:url(../images/innerPages/header-image.png);
+    background-position:center left;
+    background-repeat:no-repeat;
+}
+
+.ui-widget-content{
+    background:transparent !important;
+}
+
+.registrationHolder, .indexContainerHolder{margin-top:-98px;}
+	
+.mainMenuHolder{
+	min-width:200px;
+	min-height:100px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	border:1px solid #cccccc;
+}
+
+.contentHolder{
+	min-height:100px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	border:1px solid #cccccc;
+        background:#ffffff;
+}
+
+.ui-menu, .ui-menu .ui-menu-child{
+    background:none !important;
+}
+
+.mainMenuHolder .ui-widget-content{
+    border:none !important
+}
+
+.ui-menu{
+    padding:0 !important;
+}
+
+.ui-menu .ui-menu-list .ui-widget-header{
+    width:99% !important;
+}
+/*
+.ui-menu .ui-menuitem-link{
+    width:100% !important;
+}
+*/
+.hasDatepicker{
+padding-left:28px !important;
+background-image:url(../images/datepicker-icon.png);
+background-repeat: no-repeat;
+background-position: left center;
+}
+
+
+.ui-inputfield, .ui-widget-content .ui-inputfield, .ui-widget-header .ui-inputfield{
+-webkit-box-shadow: inset 1px 1px 4px 0px rgba(0,0,0,0.2) !important;
+-moz-box-shadow: inset 1px 1px 4px 0px rgba(0,0,0,0.2) !important;
+box-shadow: inset 1px 1px 4px 0px rgba(0,0,0,0.2) !important;
+}
+
+.registrationHolder .ui-widget-content{
+    Padding:0 20px;
+    border:none !important;
+    -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.registrationHolder table{
+    margin-bottom:20px;
+}
+
+.registrationHolder table, .registrationHolder table tbody{
+    width:500px;
+    display:table;
+}
+
+.registrationHolder table tr td{
+    padding-top:20px;
+}

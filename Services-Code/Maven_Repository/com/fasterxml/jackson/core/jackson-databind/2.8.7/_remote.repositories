@@ -1,0 +1,4 @@
+#NOTE: This is an Aether internal implementation file, its format can be changed without prior notice.
+#Sat Aug 12 03:22:00 EET 2017
+jackson-databind-2.8.7.jar>=
+jackson-databind-2.8.7.pom>=

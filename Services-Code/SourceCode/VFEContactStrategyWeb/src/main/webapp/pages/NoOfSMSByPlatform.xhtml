@@ -1,0 +1,156 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/Template/menuTempplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns="http://www.w3.org/1999/xhtml">-->
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="/Template/menuTempplate.xhtml">
+
+    <ui:define name="title">
+        Total number of SMS sent to customer by service
+    </ui:define>
+
+
+
+    <ui:define name="content">
+
+        <h:form id="form">
+            <p:dialog modal="true" id="waitingMsgFun" position="center"
+                      closable="false" resizable="false" draggable=""
+                      widgetVar="waitingMsgFunDlg">
+                <table class="loading_table">
+                    <tr>
+                        <td align="center"><h:graphicImage library="images"
+                                                           url="/resources/images/loading-x.gif"></h:graphicImage></td>
+                    </tr>
+                    <tr>
+                        <td>Please Wait .......</td>
+                    </tr>
+                </table>
+            </p:dialog>
+            <p:ajaxStatus onstart="PF('waitingMsgFunDlg').show();"
+                          oncomplete="PF('waitingMsgFunDlg').hide();">
+            </p:ajaxStatus>
+
+            <p:messages id="errors" autoUpdate="true" severity="error info"/>
+            <div class="searchArea">
+                <div  class="searchArea" align="left">
+                    <div class="table_title_text">
+                        <p:outputLabel value="Total number of sms by platform by campaign"></p:outputLabel>
+                    </div>
+                    <p:panelGrid id="grid" columns="2" > 
+                        <h:panelGrid id="grid1" columns="1" >
+
+                            <p:panelGrid>
+                                <p:outputLabel for="FromDateTime" value="From" />
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:calendar id="FromDateTime" value="#{noOfSMSByPlatform.reportsModel.fromDate}" 
+                                        pattern="dd/MM/yyyy HH:mm:ss" binding="#{fromDate}">
+                            </p:calendar>
+
+                        </h:panelGrid>
+                        <h:panelGrid id="grid2" columns="1" >
+                            <p:panelGrid>
+                                <p:outputLabel for="ToDateTime" value="To" />
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:calendar id="ToDateTime" value="#{noOfSMSByPlatform.reportsModel.toDate}" 
+                                        pattern="dd/MM/yyyy HH:mm:ss" binding="#{toDate}"/>
+
+                        </h:panelGrid>
+                        <h:panelGrid id="grid3" columns="1" >
+                            <p:panelGrid>
+                                <h:outputLabel value="MSISDN" />
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <h:inputText id="MSISDN_ID" value="#{noOfSMSByPlatform.reportsModel.msisdn}"
+                                         onkeydown="noArabicNoApostropheNoQuotationMark();" onkeypress="noArabicNoApostropheNoQuotationMark();" onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                         validator="#{noOfSMSByPlatform.requiredFieldsValidator}" maxlength="30">
+                                <f:attribute name="fromDateAttr" value="#{fromDate}"/>
+                                <f:attribute name="toDateAttr" value="#{toDate}"/>
+                                <f:attribute name="serviceNameAttr" value="#{serviceName}"/>
+                                <f:attribute name="messageStatusAttr" value="#{messageStatus}"/>
+                            </h:inputText>
+
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="1">
+                            <p:panelGrid>
+                                <p:outputLabel  value="Service Name" />
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:selectOneMenu id="service" value="#{noOfSMSByPlatform.reportsModel.serviceId}" 
+                                             style="width:350px" binding="#{serviceName}">
+                                <f:selectItem itemLabel="--No Selection--" noSelectionOption="true" />
+                                <f:selectItems value="#{noOfSMSByPlatform.services}" var="service"
+                                               itemValue="#{service.versionId}" itemLabel="#{service.serviceName}"
+                                               >
+                                </f:selectItems>
+                            </p:selectOneMenu>
+
+                        </h:panelGrid>
+                        <h:panelGrid columns="1">
+                            <p:panelGrid>
+                                <p:outputLabel value="Message Status" />
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:selectOneMenu id="messageStatus" value="#{noOfSMSByPlatform.reportsModel.messageStatus}" 
+                                             style="width:350px" binding="#{messageStatus}">
+                                <f:selectItem itemLabel="--No Selection--" noSelectionOption="true" />
+                                <f:selectItems value="#{noOfSMSByPlatform.messageStatus.entrySet()}" var="status"
+                                               itemLabel="#{status.value}" itemValue="#{status.key}"/>
+                            </p:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="1"></h:panelGrid>
+                        <h:panelGrid columns="1"></h:panelGrid>
+                        <p:panelGrid>
+                            <div class="W100 TAR">
+                                <p:commandButton value="Generate" action="#{noOfSMSByPlatform.retrieveCountOfReciecvedSMS}"
+                                                 style="float:none !important;"
+                                                 ajax="true" onclick="PF('waitingMsgFunDlg').show();"
+                                                 oncomplete="PF('waitingMsgFunDlg').hide();" update="tbl"/>
+                                <p:commandButton value="Cancel" 
+                                                 style="float:none !important;"
+                                                 action="reportListPage.xhtml"/>
+                            </div>
+                        </p:panelGrid>
+                    </p:panelGrid>
+                </div>
+            </div>
+
+            <p:dataTable id="tbl" var="model" value="#{noOfSMSByPlatform.reports}"
+                         rows="1" style="margin-bottom:20px" emptyMessage="No Records">
+
+                <p:column headerText="SMS Count">
+                    <h:outputText value="#{model.count}" />
+                </p:column>
+
+                <p:column headerText="System Name">
+                    <h:outputText value="#{model.serviceName}" />
+                </p:column>
+
+                <p:column headerText="System Priority">
+                    <h:outputText value="#{model.systemPriority}" />
+                </p:column>
+
+            </p:dataTable>
+            <div class="W100 TAC">
+                <p:commandButton value="Download" ajax="false"  immediate="true" style="float:none !important;">
+                    <p:dataExporter type="xls" target="form:tbl" fileName="count" />
+                </p:commandButton>
+            </div>
+
+
+        </h:form>
+    </ui:define>
+
+</ui:composition>

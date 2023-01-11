@@ -1,0 +1,84 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="/Template/menuTempplate.xhtml">
+
+    <ui:define name="title">
+        SMS Groups List
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+            
+            <p:dialog modal="true" id="waitingMsgFun" position="center"
+                          closable="false" resizable="false" draggable=""
+                          widgetVar="waitingMsgFunDlg">
+                    <table class="loading_table">
+                        <tr>
+                            <td align="center"><h:graphicImage library="images"
+                                                               url="/resources/images/loading-x.gif"></h:graphicImage></td>
+                        </tr>
+                        <tr>
+                            <td>Please Wait .......</td>
+                        </tr>
+                    </table>
+                </p:dialog>
+                <p:ajaxStatus onstart="PF('waitingMsgFunDlg').show();"
+                              oncomplete="PF('waitingMsgFunDlg').hide();">
+                </p:ajaxStatus>
+
+            <div id="Messages" align="center">
+                <p:messages id="msgs" showDetail="false" autoUpdate="true"
+                            closable="true" />
+            </div>
+
+            <div class="table_title_text">
+                <p:panelGrid columns="4">
+                    <p:outputLabel value="Groups List"></p:outputLabel>
+                    <p:commandButton value="Create SMSGroup" action="#{groupsBean.createGroup()}">
+                    </p:commandButton>
+                </p:panelGrid>
+            </div>
+
+            <div class="table-responsive serachTabel">
+                <p:dataTable id="groupsTable" 
+                             rows="50" paginator="true"
+                             paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                             rowsPerPageTemplate="50,100,150" paginatorPosition="bottom"
+                             value="#{groupsBean.groupsList}" var="group" 
+                             rowKey="#{group.groupId}">                    
+
+                    <p:column headerText="Name" sortBy="#{group.groupName}"  
+                              filterMatchMode="contains" filterBy="#{group.groupName}">
+                        <p:outputLabel value="#{group.groupName}"/></p:column>
+                    <p:column headerText="Group Priority" sortBy="#{group.groupPriority}" 
+                              filterMatchMode="contains" filterBy="#{group.groupPriority}">
+                        <p:outputLabel value="#{group.groupPriority}"></p:outputLabel></p:column>
+                    <p:column headerText="Group Day Threshold" sortable="true" sortBy="#{group.dailyThreshold}" 
+                              filterMatchMode="contains" filterBy="#{group.dailyThreshold}">
+                        <p:outputLabel value="#{group.dailyThreshold}"></p:outputLabel></p:column>
+                    <p:column headerText="Group Week Threshold" sortBy="#{group.weeklyThreshold}" 
+                              filterMatchMode="contains" filterBy="#{group.weeklyThreshold}">
+                        <p:outputLabel value="#{group.weeklyThreshold}"></p:outputLabel></p:column>
+                    <p:column headerText="Group Month Threshold" sortBy="#{group.monthlyThreshold}" 
+                              filterMatchMode="contains" filterBy="#{group.monthlyThreshold}">
+                        <p:outputLabel value="#{group.monthlyThreshold}"></p:outputLabel></p:column>
+                    <p:column headerText="Group Status" sortBy="#{group.statusName}" 
+                              filterMatchMode="contains" filterBy="#{group.statusName}">
+                        <p:outputLabel value="#{group.statusName}"></p:outputLabel></p:column>
+                    <p:column headerText="">
+                        <p:commandButton icon="ui-icon-search" action="#{groupsBean.viewGroup(group)}"/>
+<!--                        <p:commandButton icon="ui-icon-search" action="#{groupsBean.approveGroup(group)}" rendered="#{group.enableApprove}"/>-->
+                        <p:commandButton icon="ui-icon-pencil" action="#{groupsBean.editGroup(group)}" rendered="#{group.enableEdit}"/>
+                        <p:commandButton  icon="ui-icon-trash" action="#{groupsBean.deleteGroup(group)}" update="form:groupsTable form:msgs" rendered="#{group.enableDelete}" >
+                            <p:confirm header="Confirmation" message="Are you sure you want to delete this Group?"
+                                       icon="ui-icon-alert" />
+                        </p:commandButton></p:column>
+                </p:dataTable>
+            </div>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

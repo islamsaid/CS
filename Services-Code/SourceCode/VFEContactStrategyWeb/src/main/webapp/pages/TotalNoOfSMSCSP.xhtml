@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/Template/menuTempplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns="http://www.w3.org/1999/xhtml">-->
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="/Template/menuTempplate.xhtml">
+
+    <ui:define name="title">
+        Total number of SMS communicated to the contact strategy platform
+    </ui:define>
+
+
+
+    <ui:define name="content">
+
+
+        <h:form id="form">
+
+            <p:dialog modal="true" id="waitingMsgFun" position="center"
+                      closable="false" resizable="false" draggable=""
+                      widgetVar="waitingMsgFunDlg">
+                <table class="loading_table">
+                    <tr>
+                        <td align="center"><h:graphicImage library="images"
+                                                           url="/resources/images/loading-x.gif"></h:graphicImage></td>
+                    </tr>
+                    <tr>
+                        <td>Please Wait .......</td>
+                    </tr>
+                </table>
+            </p:dialog>
+            <p:ajaxStatus onstart="PF('waitingMsgFunDlg').show();"
+                          oncomplete="PF('waitingMsgFunDlg').hide();">
+            </p:ajaxStatus>
+
+            <f:event listener="#{totalNoOfSMSCSP.validateReq}" type="postValidate" />
+            <p:messages id="errors" autoUpdate="true" severity="error info"/>
+            <div class="searchArea">
+                <div class="table_title_text">
+                    <p:outputLabel value="Total number of SMS received to the contact strategy platform"></p:outputLabel>
+                </div>
+                <p:panelGrid id="grid" columns="2">                     
+
+                    <h:panelGrid id="grid1" columns="1" >
+                        <p:panelGrid>
+                            <p:outputLabel  value="From" />
+                            <p:outputLabel value="*" style="color: red;"/>
+                        </p:panelGrid>
+                        <p:calendar id="fromDateID" value="#{totalNoOfSMSCSP.reportsModel.fromDate}" 
+                                    pattern="dd/MM/yyyy HH:mm:ss">
+                        </p:calendar>
+
+                    </h:panelGrid>
+                    <h:panelGrid id="grid2" columns="1" >
+                        <p:panelGrid>
+                            <p:outputLabel  value="To" />
+                            <p:outputLabel value="*" style="color: red;"/>
+                        </p:panelGrid>
+                        <p:calendar id="toDateID" value="#{totalNoOfSMSCSP.reportsModel.toDate}" 
+                                    pattern="dd/MM/yyyy HH:mm:ss" />
+                    </h:panelGrid>
+                    <h:panelGrid id="grid3"></h:panelGrid>
+                    <p:panelGrid id="grid4">
+                        <div class="W100 TAR">
+                            <p:commandButton value="Generate"
+                                             action="#{totalNoOfSMSCSP.retrieveCountOfReciecvedToSMSCSP}"
+                                             style="float:none !important;"
+                                             ajax="true" onclick="PF('waitingMsgFunDlg').show();" update="tbl"/>
+                            <p:commandButton value="Cancel" 
+                                             style="float:none !important;"
+                                             action="reportListPage.xhtml" immediate="true"/>
+                        </div>
+                    </p:panelGrid>
+                </p:panelGrid>
+            </div>
+            <p:dataTable id="tbl" var="model" value="#{totalNoOfSMSCSP.reports}"
+                         rows="1" style="margin-bottom:20px" emptyMessage="No Records">
+
+                <p:column headerText="Count">
+                    <p:outputLabel value="#{model.count}"/>
+                </p:column>
+
+            </p:dataTable>
+            <div class="W100 TAC">
+                <p:commandButton value="Download" ajax="false"  immediate="true" style="float:none !important;">
+                    <p:dataExporter type="xls" target="form:tbl" fileName="count" />
+                </p:commandButton>
+
+            </div>
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

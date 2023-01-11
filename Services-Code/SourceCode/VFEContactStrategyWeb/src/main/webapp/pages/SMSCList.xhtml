@@ -1,0 +1,90 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="/Template/menuTempplate.xhtml">
+    <ui:define name="title">
+        SMSC List
+    </ui:define>
+    <ui:define name="content">
+
+        <h:form id="form">
+            
+            <p:dialog modal="true" id="waitingMsgFun" position="center"
+                          closable="false" resizable="false" draggable=""
+                          widgetVar="waitingMsgFunDlg">
+                    <table class="loading_table">
+                        <tr>
+                            <td align="center"><h:graphicImage library="images"
+                                                               url="/resources/images/loading-x.gif"></h:graphicImage></td>
+                        </tr>
+                        <tr>
+                            <td>Please Wait .......</td>
+                        </tr>
+                    </table>
+                </p:dialog>
+                <p:ajaxStatus onstart="PF('waitingMsgFunDlg').show();"
+                              oncomplete="PF('waitingMsgFunDlg').hide();">
+                </p:ajaxStatus>
+            
+            <div id="Messages" align="center">
+                <p:messages id="msgs" showDetail="false" autoUpdate="true"
+                            closable="true" />
+            </div>
+            <div class="table_title_text">
+                <p:panelGrid columns="4">
+                    <p:outputLabel value="SMSC List"></p:outputLabel>
+                    <p:commandButton value="Create SMSC" action="#{smscBean.goToCreatePage()}"></p:commandButton>
+                </p:panelGrid>
+            </div>
+
+
+            <div class="searchArea">
+
+                <div align="center">
+                    <div class="table-responsive serachTabel">
+                        <p:dataTable var="smsc" value="#{smscBean.smscList}" paginator="true" rows="10" paginatorPosition="bottom"
+                                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                     rowsPerPageTemplate="5,10,15"   id="smscTable" widgetVar="smscTable" styleClass="paddingStyle">
+
+                            <p:column headerText="SMSC Name" sortBy="#{smsc.SMSCname}" filterBy="#{smsc.SMSCname}" filterMatchMode="contains">
+                                <h:outputText value="#{smsc.SMSCname}" />
+                            </p:column>
+                            <p:column headerText="Username" sortBy="#{smsc.username}" filterBy="#{smsc.username}">
+                                <h:outputText value="#{smsc.username}" />
+                            </p:column>
+                            <p:column headerText="IP" sortBy="#{smsc.ip}" filterBy="#{smsc.ip}">
+                                <h:outputText value="#{smsc.ip}" />
+                            </p:column>
+                            <p:column headerText="Port" sortBy="#{smsc.port}" filterBy="#{smsc.port}">
+                                <h:outputText value="#{smsc.port}" />
+                            </p:column>
+                            <p:column headerText="System Type" sortBy="#{smsc.systemType}" filterBy="#{smsc.systemType}">
+                                <h:outputText value="#{smsc.systemType}" />
+                            </p:column>
+                            <p:column headerText="Status" sortBy="#{smsc.statusName}" filterBy="#{smsc.statusName}" filterMatchMode="exact">
+                                <f:facet name="filter">
+                                    <p:selectOneMenu onchange="PF('smscTable').filter()">
+                                        <f:selectItem itemLabel="Select One" itemValue="#{null}" noSelectionOption="true"/>  
+                                        <f:selectItems value="#{smscBean.operationStatus}" var="status" 
+                                                       itemLabel="#{status.lable}" itemValue="#{status.lable}"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <h:outputText value="#{smsc.statusName}" />
+                            </p:column>
+                            <p:column>
+                                <p:commandButton icon="ui-icon-search" action="#{smscBean.goToViewPage(smsc)}"></p:commandButton>
+                                <p:commandButton icon="ui-icon-pencil" rendered="#{smsc.enableEdit}" action="#{smscBean.goToEditPage(smsc)}"></p:commandButton>
+                                <p:commandButton icon="ui-icon-trash" rendered="#{smsc.enableDelete}"  immediate="true" action="#{smscBean.deleteSMSC(smsc)}" update="@form" >
+                                    <p:confirm header="Confirm"
+                                               message="Are you sure you want to delete #{smsc.SMSCname} ?" icon="ui-icon-alert" /></p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+                </div>
+
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

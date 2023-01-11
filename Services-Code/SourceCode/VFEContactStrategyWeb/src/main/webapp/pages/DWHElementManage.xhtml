@@ -1,0 +1,246 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/Template/menuTempplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:define name="title">
+        DWH Elements Configuration
+    </ui:define>
+
+    <div class="innerHeader Mbottom20">
+    </div>
+
+    <ui:define name="content">
+
+
+
+
+
+
+        <div class="searchArea">
+            <h:form id="form">
+
+                <p:dialog modal="true" id="waitingMsgFun" position="center"
+                          closable="false" resizable="false" draggable=""
+                          widgetVar="waitingMsgFunDlg">
+                    <table class="loading_table">
+                        <tr>
+                            <td align="center"><h:graphicImage library="images"
+                                                               url="/resources/images/loading-x.gif"></h:graphicImage></td>
+                        </tr>
+                        <tr>
+                            <td>Please Wait .......</td>
+                        </tr>
+                    </table>
+                </p:dialog>
+                <p:ajaxStatus onstart="PF('waitingMsgFunDlg').show();"
+                              oncomplete="PF('waitingMsgFunDlg').hide();">
+                </p:ajaxStatus>
+
+                <script type="text/javascript">
+                    function focusLastMultiSelectionOption() {
+                        $("input[id*='multiSelectionItemLbl']").last().focus();
+                    }
+                </script>
+
+                <div id="Messages" align="center">
+                    <p:messages id="msgs" showDetail="false" autoUpdate="true"
+                                closable="true" />
+                </div>
+
+                <div class="table_title_text">
+                    <p:panelGrid columns="4">
+                        <p:outputLabel rendered="#{dwhElementManageBean.createMode}" value="Create DWH Element"/>
+                        <p:outputLabel rendered="#{dwhElementManageBean.editMode}" value="Edit DWH Element #{dwhElementManageBean.element.name}"/>
+                        <p:outputLabel rendered="#{dwhElementManageBean.viewMode}" value="View DWH Element #{dwhElementManageBean.element.name}"/>
+                    </p:panelGrid>
+                </div>
+
+                <div align="center">
+                    <p:panelGrid columns="1" layout="grid">
+
+                        <p:panelGrid columns="2" layout="grid">
+                            <p:panelGrid columns="1" layout="grid">
+                                <p:panelGrid>
+                                    <p:outputLabel value="Attribute Name"/>
+                                    <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                                </p:panelGrid>
+                                <p:inputText id="nameIn" maxlength="64"
+                                             value="#{dwhElementManageBean.element.name}"
+                                             onkeydown="noArabicNoApostropheNoQuotationMark();"
+                                             onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                             onkeypress="noArabicNoApostropheNoQuotationMark();"
+                                             disabled="#{!dwhElementManageBean.createMode}"/>
+                            </p:panelGrid>
+                            <p:panelGrid columns="1" layout="grid">
+                                <p:panelGrid>
+                                    <h:outputText value="Attribute File Index"/>
+                                    <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                                </p:panelGrid>
+
+                                <p:spinner id="fileIndexIn" 
+                                           value="#{dwhElementManageBean.element.fileIndex}" 
+                                           min="1" max="300"
+                                           onkeydown="return onlyNumWithMaxLength(3)"
+                                           disabled="#{dwhElementManageBean.viewMode}">
+                                    <p:ajax event="change" process="@this"/>
+                                </p:spinner>
+                            </p:panelGrid>
+                        </p:panelGrid>
+                        <p:panelGrid columns="2" layout="grid">
+                            <p:panelGrid columns="1" layout="grid">
+                                <p:panelGrid>
+                                    <p:outputLabel value="Attribute Type"/>
+                                    <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                                </p:panelGrid>
+                                <p:selectOneMenu id="dataTypeIn" 
+                                                 value="#{dwhElementManageBean.element.dataTypeId}" 
+                                                 disabled="#{dwhElementManageBean.viewMode || dwhElementManageBean.element.dwhName.equals('MSISDN')}"
+                                                 >
+                                    <f:selectItem  itemValue="0" itemLabel="--No Selection--"/>
+                                    <f:selectItems var="lookUp" itemLabel="#{lookUp.lable}" itemValue="#{lookUp.id}"
+                                                   value="#{dwhElementManageBean.availableDatatypes}" 
+                                                   />
+                                    <p:ajax event="change" listener="#{dwhElementManageBean.dataTypeSelectionListener()}" 
+                                            process="@this" 
+                                            update=":form:columnNameIn"/>
+
+                                </p:selectOneMenu>
+                            </p:panelGrid>
+                            <p:panelGrid columns="1" layout="grid">
+                                <p:panelGrid>
+                                    <h:outputText value="Attribute Column Name"/>
+                                    <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                                </p:panelGrid>
+                                <p:selectOneMenu id="columnNameIn" 
+                                                 value="#{dwhElementManageBean.element.dwhName}" 
+                                                 disabled="#{dwhElementManageBean.viewMode || dwhElementManageBean.element.dwhName.equals('MSISDN')}">                                                              
+                                    <f:selectItem  itemValue="0" itemLabel="--No Selection--"/>
+                                    <f:selectItems 
+                                        value="#{dwhElementManageBean.visibleColumnNames}" />
+                                </p:selectOneMenu>
+                            </p:panelGrid>
+                        </p:panelGrid>
+                        <p:panelGrid columns="2" layout="grid">
+
+                            <p:panelGrid columns="1" layout="grid">
+                                <p:panelGrid>
+                                    <p:outputLabel value="Display Name"/>
+                                    <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                                </p:panelGrid>
+
+                                <p:inputText id="displayNameIn" 
+                                             value="#{dwhElementManageBean.element.displayName}" 
+                                             onkeydown="noArabicNoApostropheNoQuotationMark();"
+                                             onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                             onkeypress="noArabicNoApostropheNoQuotationMark();" 
+                                             maxlength="64"
+                                             disabled="#{dwhElementManageBean.viewMode}"/>
+                            </p:panelGrid>
+                            <p:panelGrid columns="1" layout="grid">
+                                <p:panelGrid>
+                                    <p:outputLabel value="Display Type"/>
+                                    <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                                </p:panelGrid>
+                                <p:selectOneMenu id="displayTypeIn" 
+                                                 value="#{dwhElementManageBean.element.displayTypeId}"
+                                                 disabled="#{dwhElementManageBean.viewMode}"
+                                                 >
+                                    <f:selectItem  itemValue="0" itemLabel="--No Selection--"/>
+                                    <f:selectItems  var="n" itemLabel="#{n.lable}" itemValue="#{n.id}"
+                                                    value="#{dwhElementManageBean.availableDisplayTypes}" 
+
+                                                    />
+                                    <p:ajax listener="#{dwhElementManageBean.displayTypeSelection()}" 
+                                            process="@this" update="multiselection"/>
+
+
+
+                                </p:selectOneMenu>
+                            </p:panelGrid>
+                        </p:panelGrid>
+                        <p:panelGrid columns="2" layout="grid">
+                            <p:panelGrid columns="1" layout="grid">
+                                <p:panelGrid columns="1">
+                                    <p:outputLabel value="Description"/>
+                                </p:panelGrid>
+
+                                <p:inputTextarea id="descriptionIn"  
+                                                 value="#{dwhElementManageBean.element.description}"
+                                                 onkeydown="noArabicNoApostropheNoQuotationMark();"
+                                                 onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                                 onkeypress="noArabicNoApostropheNoQuotationMark();"
+                                                 maxlength="512"
+                                                 autoResize="false"
+                                                 disabled="#{dwhElementManageBean.viewMode}">
+                                </p:inputTextarea>
+                            </p:panelGrid>
+                            <p:panelGrid columns="1" layout="grid">
+                            </p:panelGrid>
+                        </p:panelGrid>
+                        <p:panelGrid columns="1" id="multiselection" layout="grid">
+                            <p:dataTable value="#{dwhElementManageBean.element.multiSelectionValues}" rendered="#{dwhElementManageBean.showMultiSelection}"
+                                         var="si" rowIndexVar="idx" id="editmultiSelectionItemsGrd"  style="alignment-adjust: central !important"
+                                         >
+                                <p:column headerText="Multi-Selection Items">
+                                    <p:panel >
+                                        <p:outputLabel id="multiSelectionItemLbl#{idx}" escape="false" value="#{idx + 1}-"/>
+
+                                        <p:inputText id="multiSelectionItemLbl#{idx}in"   value="#{si.valueLabel}"
+                                             onkeydown="noArabicNoApostropheNoQuotationMark();"
+                                             onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                             onkeypress="noArabicNoApostropheNoQuotationMark();"
+                                                     disabled="#{dwhElementManageBean.viewMode}" />
+                                        <div class="btns-table">
+                                            <p:panelGrid id="buttons" columns="2">
+                                                <p:commandButton value="Add"  styleClass="button"
+                                                                 rendered="#{dwhElementManageBean.showMultiSelection}"
+                                                                 action="#{dwhElementManageBean.addNewMultiSelectionOption()}" 
+                                                                 update="form:editmultiSelectionItemsGrd" 
+                                                                 oncomplete="focusLastMultiSelectionOption();"
+                                                                 disabled="#{dwhElementManageBean.viewMode}"/>
+                                                <p:commandButton value="Remove" styleClass="button button-last"
+                                                                 action="#{dwhElementManageBean.removeMultiSelectionOption(si)}" 
+                                                                 update="form:editmultiSelectionItemsGrd"
+                                                                 oncomplete="focusLastMultiSelectionOption();"
+                                                                 disabled="#{dwhElementManageBean.viewMode}"/>
+                                            </p:panelGrid>
+                                        </div>
+                                    </p:panel>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panelGrid>
+
+
+                    </p:panelGrid>
+                    <div class="btns-table">
+                        <p:panelGrid id="buttons" columns="2">
+                            <p:commandButton id="Update" styleClass="button"
+                                             value="Save"
+                                             rendered="#{dwhElementManageBean.editMode}"
+                                             action="#{dwhElementManageBean.updateElement()}"
+                                             />
+                            <p:commandButton id="Save" styleClass="button"
+                                             value="Save"
+                                             rendered="#{dwhElementManageBean.createMode}"
+                                             action="#{dwhElementManageBean.saveElement()}"
+                                             />
+                            <p:commandButton id="Cancel" styleClass="button button-last"
+                                             value="Cancel" 
+                                             action="#{dwhElementManageBean.cancel()}"
+                                             />
+
+                        </p:panelGrid>
+
+                    </div>
+
+                </div>
+            </h:form>
+        </div>
+    </ui:define>
+
+</ui:composition>

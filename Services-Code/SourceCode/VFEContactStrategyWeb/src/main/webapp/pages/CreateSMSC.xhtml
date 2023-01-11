@@ -1,0 +1,266 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="/Template/menuTempplate.xhtml">
+
+    <ui:define name="title">
+        SMSC Management
+    </ui:define>
+
+    <ui:define name="content">
+
+        <div class="searchArea">
+
+            <h:form id="form">
+
+                <p:dialog modal="true" id="waitingMsgFun" position="center"
+                          closable="false" resizable="false" draggable=""
+                          widgetVar="waitingMsgFunDlg">
+                    <table class="loading_table">
+                        <tr>
+                            <td align="center"><h:graphicImage library="images"
+                                                               url="/resources/images/loading-x.gif"></h:graphicImage></td>
+                        </tr>
+                        <tr>
+                            <td>Please Wait .......</td>
+                        </tr>
+                    </table>
+                </p:dialog>
+                <p:ajaxStatus onstart="PF('waitingMsgFunDlg').show();"
+                              oncomplete="PF('waitingMsgFunDlg').hide();">
+                </p:ajaxStatus>
+
+                <div id="Messages" align="center">
+                    <p:messages id="msgs" showDetail="false" autoUpdate="true"
+                                closable="true" globalOnly="true"/>
+                </div>
+                <div class="table_title_text">
+                    <p:panelGrid columns="4">
+                        <p:outputLabel value="Create SMSC"
+                                       rendered="#{smscManagementBean.selectedSMSC.isCreationMode}"></p:outputLabel>
+                        <p:outputLabel value="Edit #{smscManagementBean.selectedSMSC.SMSCname}"
+                                       rendered="#{smscManagementBean.selectedSMSC.isEditMode}"></p:outputLabel>
+                        <p:outputLabel value="View #{smscManagementBean.selectedSMSC.SMSCname}"
+                                       rendered="#{smscManagementBean.selectedSMSC.isViewMode}"></p:outputLabel>
+                        <p:outputLabel value="Approve #{smscManagementBean.selectedSMSC.SMSCname}"
+                                       rendered="#{smscManagementBean.selectedSMSC.approvalMode}"></p:outputLabel>
+                    </p:panelGrid>
+                </div>
+
+
+
+                <div align="center">
+                    <p:panelGrid columns="2" layout="grid">
+                        <p:panelGrid columns="1" layout="grid">
+                            <p:panelGrid>
+                                <p:outputLabel value="SMSC Name"/>
+                                <p:outputLabel value="*" style="color: red" ></p:outputLabel>
+                            </p:panelGrid>
+                            <p:inputText value="#{smscManagementBean.selectedSMSC.SMSCname}" 
+                                         readonly="#{!smscManagementBean.selectedSMSC.isCreationMode}" 
+                                         binding="#{nameBinding}"
+                                             onkeydown="noArabicNoApostropheNoQuotationMark();"
+                                             onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                             onkeypress="noArabicNoApostropheNoQuotationMark();"
+                                         id="SMSCName" maxlength="30">
+                                <!--<p:ajax process="@this"></p:ajax>-->
+                            </p:inputText>
+                        </p:panelGrid>
+                        <p:panelGrid columns="1" layout="grid">
+                            <p:panelGrid>
+                                <h:outputText value="SMSC IP"/>
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:inputText value="#{smscManagementBean.selectedSMSC.ip}" 
+                                         readonly="#{smscManagementBean.selectedSMSC.isViewMode}" binding="#{ipBinding}"
+                                         validator="#{smscManagementBean.requiredFieldsValidator}" id="SMSCIP"
+                                         maxlength="15"
+                                         >
+                                <f:attribute name="nameAttr" value="#{nameBinding}"></f:attribute>
+                                <f:attribute name="portAttr" value="#{portBinding}"></f:attribute>
+                                <f:attribute name="systemTypeAttr" value="#{systemTypeBinding}"></f:attribute>
+                                <f:attribute name="usernameAttr" value="#{usernameBinding}"></f:attribute>
+                                <f:attribute name="passwordAttr" value="#{passwordBinding}"></f:attribute>
+                                <f:attribute name="confirmPasswordAttr" value="#{confirmPasswordBinding}"></f:attribute>
+                                <f:attribute name="windowSizeAttr" value="#{windowSizeBinding}"></f:attribute>
+                                <f:attribute name="throughputAttr" value="#{throughputBinding}"></f:attribute>
+                            </p:inputText>
+                        </p:panelGrid>
+                    </p:panelGrid>
+                    <p:panelGrid columns="2" layout="grid">
+                        <p:panelGrid columns="1" layout="grid">
+                            <p:panelGrid>
+                                <h:outputText value="SMSC Port"/>
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:inputText value="#{smscManagementBean.selectedSMSC.port}" 
+                                         readonly="#{smscManagementBean.selectedSMSC.isViewMode}"
+                                         binding="#{portBinding}" maxlength="5"
+                                         onkeypress="if(event.keyCode &lt; 48 || event.keyCode &gt; 57) return false;">
+                                <!--<p:ajax process="@this"></p:ajax>-->
+
+                            </p:inputText>
+                        </p:panelGrid>
+                        <p:panelGrid columns="1" layout="grid">
+                            <p:panelGrid>
+                                <h:outputText value="System Type"/>
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:inputText value="#{smscManagementBean.selectedSMSC.systemType}" 
+                                         readonly="#{smscManagementBean.selectedSMSC.isViewMode}"
+                                             onkeydown="noArabicNoApostropheNoQuotationMark();"
+                                             onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                             onkeypress="noArabicNoApostropheNoQuotationMark();"
+                                         binding="#{systemTypeBinding}" maxlength="30">
+                                <!--<p:ajax process="@this"></p:ajax>-->
+
+                            </p:inputText>
+                        </p:panelGrid>
+                    </p:panelGrid>
+                    <p:panelGrid columns="2" layout="grid">
+                        <p:panelGrid columns="1" layout="grid">
+                            <p:panelGrid>
+                                <h:outputText value="Username"/>
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:inputText value="#{smscManagementBean.selectedSMSC.username}" 
+                                         readonly="#{smscManagementBean.selectedSMSC.isViewMode}"
+                                             onkeydown="noArabicNoApostropheNoQuotationMark();"
+                                             onkeyup="noArabicNoApostropheNoQuotationMark();"
+                                             onkeypress="noArabicNoApostropheNoQuotationMark();"
+                                         binding="#{usernameBinding}" maxlength="30">
+                                <!--<p:ajax process="@this"></p:ajax>-->
+                            </p:inputText>
+                        </p:panelGrid>
+                        <p:panelGrid columns="1" layout="grid" rendered="#{smscManagementBean.selectedSMSC.isCreationMode}">
+                            <p:panelGrid>
+                                <h:outputText value="Password"/>
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:password value="#{smscManagementBean.selectedSMSC.password}" binding="#{passwordBinding}" maxlength="30" >
+                                <!--<p:ajax process="@this"></p:ajax>-->
+                            </p:password>
+                        </p:panelGrid>
+                    </p:panelGrid>
+
+                    <p:panelGrid columns="2" layout="grid">
+                        <p:panelGrid columns="1" layout="grid" rendered="#{smscManagementBean.selectedSMSC.isCreationMode}">
+                            <p:panelGrid>
+                                <h:outputText value="Confirm Password"/>
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:password value="#{smscManagementBean.selectedSMSC.passwordConfirm}"  
+                                        binding="#{confirmPasswordBinding}" maxlength="30">
+                                <!--<p:ajax process="@this"></p:ajax>-->
+                            </p:password>
+                        </p:panelGrid>
+                        <p:panelGrid columns="1" layout="grid">
+                            <p:panelGrid>
+                                <h:outputText value="Window Size"/>
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:inputText value="#{smscManagementBean.selectedSMSC.windowSize}" 
+                                         readonly="#{smscManagementBean.selectedSMSC.isViewMode}"
+                                         binding="#{windowSizeBinding}" maxlength="5"
+                                         onkeypress="if(event.keyCode &lt; 48 || event.keyCode &gt; 57) return false;">
+
+
+                            </p:inputText>
+                        </p:panelGrid>
+                    </p:panelGrid>
+                    <p:panelGrid columns="2" layout="grid">
+                        <p:panelGrid columns="1" layout="grid">
+                            <p:panelGrid>
+                                <h:outputText value="Throughput (SMS/sec)"/>
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:inputText value="#{smscManagementBean.selectedSMSC.throughput}" 
+                                         readonly="#{smscManagementBean.selectedSMSC.isViewMode}"
+                                         binding="#{throughputBinding}" maxlength="5"
+                                         onkeypress="if(event.keyCode &lt; 48 || event.keyCode &gt; 57) return false;">
+
+
+                            </p:inputText>
+                        </p:panelGrid>
+                    </p:panelGrid>
+                    <p:panelGrid columns="1" layout="grid" rendered="#{smscManagementBean.selectedSMSC.isEditMode}">
+                        <p:panelGrid columns="1" layout="grid" >
+                            <h:outputText value="Edited Version Description"/>
+                            <p:inputTextarea value="#{smscManagementBean.selectedSMSC.description}" 
+                                             autoResize="false"
+                                             maxlength="500"></p:inputTextarea>
+                        </p:panelGrid>
+                    </p:panelGrid>
+                    <div class="btns-table">
+                        <p:panelGrid rendered="#{!smscManagementBean.selectedSMSC.approvalMode}">
+                            <p:commandButton value="Cancel"
+                                             style="float: right !important"
+                                             action="SMSCList" immediate="true" rendered="#{!smscManagementBean.selectedSMSC.approvalMode}" styleClass="mLeft5"></p:commandButton>
+                           
+                            
+                            <p:commandButton value="Change Password"
+                                             style="float: right !important"
+                                             rendered="#{smscManagementBean.selectedSMSC.isEditMode}" action="#{smscManagementBean.openChangePasswordDialog()}" update="@form" styleClass="mLeft5"></p:commandButton>
+
+                                             
+                            <p:commandButton value="Save"
+                                             style="float: right !important"
+                                             action="#{smscManagementBean.saveSMSC}" rendered="#{smscManagementBean.selectedSMSC.isCreationMode}" styleClass="mLeft5"></p:commandButton>
+                            <p:commandButton value="Save" 
+                                             style="float: right !important"
+                                             action="#{smscManagementBean.saveSMSC}" rendered="#{smscManagementBean.selectedSMSC.isEditMode}" styleClass="mLeft5"></p:commandButton>
+
+                        </p:panelGrid>
+                        <p:panelGrid  rendered="#{smscManagementBean.selectedSMSC.approvalMode}">
+                            <p:commandButton value="Cancel" 
+                                             style="float: right !important"
+                                             rendered="#{smscManagementBean.selectedSMSC.approvalMode}" action="OperationsApproval" immediate="true" styleClass="mLeft5"/>
+                            <p:commandButton value="Reject"
+                                             style="float: right !important"
+                                             rendered="#{smscManagementBean.selectedSMSC.approvalMode}" action="#{smscManagementBean.rejectSMSCOperation()}" styleClass="mLeft5"/>
+                            <p:commandButton value="Approve" 
+                                             style="float: right !important"
+                                             rendered="#{smscManagementBean.selectedSMSC.approvalMode}" action="#{smscManagementBean.approveSMSCOperation()}" styleClass="mLeft5"/>
+                            
+
+                        </p:panelGrid>
+                    </div>
+                </div>
+                <p:dialog id="passwordDialog" widgetVar="changePasswordDialog"
+                          header="Change Password" modal="true"
+                          hideEffect="fade" showEffect="fade" resizable="false"
+                          closable="true">
+
+                    <p:messages id="passwordDialogMessages" autoUpdate="true" severity="error info"/>
+                    <p:panelGrid columns="1" layout="grid">
+                        <p:panelGrid columns="1" layout="grid" >
+                            <p:panelGrid>
+                                <h:outputText value="Old Password"/>
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:password value="#{smscManagementBean.selectedSMSC.oldPassword}" maxlength="30"></p:password>
+                        </p:panelGrid>
+                        <p:panelGrid columns="1" layout="grid" >
+                            <p:panelGrid>
+                                <h:outputText value=" New Password"/>
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:password value="#{smscManagementBean.selectedSMSC.password}" rendered="#{smscManagementBean.selectedSMSC.isEditMode}" maxlength="30"></p:password>
+                        </p:panelGrid>
+                        <p:panelGrid columns="1" layout="grid" >
+                            <p:panelGrid>
+                                <h:outputText value="Confirm Password"/>
+                                <p:outputLabel value="*" style="color: red"></p:outputLabel>
+                            </p:panelGrid>
+                            <p:password value="#{smscManagementBean.selectedSMSC.passwordConfirm}"  rendered="#{smscManagementBean.selectedSMSC.isEditMode}" maxlength="30"></p:password>
+                        </p:panelGrid>
+
+                    </p:panelGrid>
+                    <p:commandButton style="float: right !important" value="Done" action="#{smscManagementBean.closeChangePasswordDialog()}" ></p:commandButton>
+                </p:dialog>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

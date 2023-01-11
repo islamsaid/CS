@@ -1,0 +1,41 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core">
+
+                                      <p:dataTable value="#{approvalBean.queueList}" var="queue" rowKey="#{queue.id}" 
+                                             widgetVar="queueTable">
+                                    <p:column headerText="Application Queue Name" sortBy="#{queue.appName}" 
+                                              filterMatchMode="contains" filterBy="#{queue.appName}">
+                                        <p:outputLabel value="#{queue.appName}"/></p:column>
+                                    <p:column headerText="Status" filterBy="#{queue.statusLabel}" filterMatchMode="exact" 
+                                              sortBy="#{queue.statusLabel}">
+                                        <f:facet name="filter">
+                                            <p:selectOneMenu onchange="PF('queueTable').filter()">
+                                                <f:selectItem itemLabel="Select One" itemValue="#{null}" noSelectionOption="true"/>  
+                                                <f:selectItems value="#{queueListBean.operationStatus}" var="status" 
+                                                               itemLabel="#{status.lable}" itemValue="#{status.lable}"/>
+                                            </p:selectOneMenu>
+                                        </f:facet>
+                                        <p:outputLabel value="#{queue.statusLabel}"></p:outputLabel></p:column>
+                                    <p:column headerText="Creator" filterBy="#{queue.creatorName}" filterMatchMode="contains"
+                                              sortBy="#{queue.creatorName}" >
+                                        <p:outputLabel value="#{queue.creatorName}"></p:outputLabel></p:column>
+                                    <p:column >
+                                        <p:commandButton  icon="ui-icon-pencil" action="#{queueListBean.approveApplicationQueue(queue)}" />
+                                        <p:commandButton  icon="ui-icon-check"  action="#{approvalBean.approveQueue(queue)}" update="@form">
+                                            <p:confirm header="Confirmation"
+                                                       message="Are you sure you want to approve  #{queue.appName}?"
+                                                       icon="ui-icon-alert" />
+                                        </p:commandButton>
+                                        <p:commandButton  icon="ui-icon-close"  action="#{approvalBean.rejectQueue(queue)}" update="@form">
+                                            <p:confirm header="Confirmation"
+                                                       message="Are you sure you want to reject #{queue.appName} ?"
+                                                       icon="ui-icon-alert" />
+                                        </p:commandButton>
+
+                                    </p:column>
+                                </p:dataTable>
+           
+
+</ui:composition>
