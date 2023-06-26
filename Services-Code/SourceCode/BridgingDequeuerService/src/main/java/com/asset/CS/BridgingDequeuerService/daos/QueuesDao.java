@@ -112,6 +112,8 @@ public class QueuesDao {
                         smsObj.setSubmissionDate(((attrs.length >= 20 && attrs[19] != null) ? new java.util.Date(((Timestamp) attrs[19]).getTime()) : null));
                         // CR 1901 | eslam.ahmed
                         smsObj.setServicePassword(((attrs.length == 21 && attrs[20] != null) ? ((String) attrs[20]) : null));
+                        String setMsgText= new String(smsObj.getMsgText().getBytes("Cp1252"),"Cp1256");
+                        smsObj.setMsgText(setMsgText);
                         smsObjectList.add(smsObj);
 
                     }
